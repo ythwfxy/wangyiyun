@@ -16,8 +16,7 @@
                     <div class="searchAbout" v-show="showSuggest && searchHistory.length > 0">
                         <div style="opacity: 0.6; font-size: 18px">
                             搜索历史
-                            <i class="iconfont icon-lajitong" style="cursor: pointer"
-                                @click="deleteAllSearchHistory()"></i>
+                            <i class="iconfont icon-lajitong" style="cursor: pointer" @click="deleteAllSearchHistory()"></i>
                         </div>
                         <!-- 历史标签 -->
                         <div>
@@ -30,16 +29,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="login">
+                <!-- 未登录 -->
+                <div class="login" @click="showLogin = true" v-show="!this.cookie">
                     <el-avatar icon="el-icon-user-solid" class="userHead"></el-avatar>
                     <span>未登录</span>
                 </div>
-                <div class="login-success">
-
+                <!-- 登录后 -->
+                <div class="login" v-show="this.cookie" @click="showUserInfo = !showUserInfo">
+                    <el-avatar :src="userInfo.avatarUrl" class="userHead"></el-avatar>
+                    <span>{{ userInfo.nickname }}</span>
                 </div>
 
                 <div class="infom">
-                    <i class="el-icon-s-opportunity" style="cursor: pointer;"></i>
+                    <!-- 点击后更换页面皮肤风格 -->
+                    <i class="el-icon-s-opportunity" style="cursor: pointer;" @click="changeStyle()"></i>
+                    <!-- 点击后显示消息 -->
                     <i class="el-icon-message" style="cursor: pointer;"></i>
                 </div>
             </el-header>
@@ -54,6 +58,30 @@
                 </el-main>
             </el-container>
         </el-container>
+        <!-- 登陆界面 -->
+        <div class="login-modal" v-show="showLogin || showQrCode" >
+            <!-- 手机号登录  暂不可用 -->
+            <div class="modal-content" v-show="!showQrCode">
+                <span class="close-button" @click="showLogin = false">×</span>
+                <div class="input-container">
+                    <input type="text" placeholder="请输入手机号" v-model="this.phone">
+                    <input type="password" placeholder="请输入密码" v-model="this.password">
+                </div>
+                <button class="login-button" @click="login()">登录</button>
+                <button class="login-button" @click="tryQrCode()">二维码登录</button>
+            </div>
+            <!-- 二维码登录页面 -->
+            <div class="modal-content" v-show="showQrCode">
+                <span class="close-button" @click="showQrCode = false;stopPolling=true">×</span>
+                <img :src="qrCode" style="width: 200px;height: 200px;margin-bottom: 20px;" />
+                <button class="login-button" @click="showQrCode = false;stopPolling=true">返回手机号登录</button>
+            </div>
+        </div>
+        <!-- 登录后的用户信息,点击后出现下拉菜单，有一个退出登录选项-->
+        <div class="user-info" v-show="showUserInfo" @click="logout()">
+            退出登录
+        </div>
+
         <musicPlay ref="musicPlay" @isShowSongList="isShowSongList"></musicPlay>
         <musicTable v-show="showSongList" @getNextSong="getNextSong" @cleanDur="cleanDur"></musicTable>
     </div>
@@ -74,10 +102,33 @@ export default {
             isClose: true,
             //是否显示歌单
             showSongList: false,
+            // 显示登录界面
+            showLogin: false,
+            // 手机号
+            phone: '',
+            // 密码
+            password: '',
+            // 二维码登录界面
+            showQrCode: false,
+            // 二维码key
+            qrKey: '',
+            // 二维码 base64
+            qrCode: '',
+            // 用户ID
+            accountId: '',
+            // 用户信息
+            userInfo: {
+                avatarUrl: '',
+                nickname: ''
+            },
+            // 显示登陆后的用户信息
+            showUserInfo: false,
+            // 控制二维码轮询信号
+            stopPolling: false,
         }
     },
     computed: {
-        ...mapState(['searchHistory'])
+        ...mapState(['searchHistory', 'cookie'])
     },
     methods: {
         //是否展示歌单
@@ -121,10 +172,155 @@ export default {
         deleteSearchHistory(item) {
             this.$store.dispatch("deleteSearchHistory", item);
         },
+        //播放下一首歌曲
+        getNextSong() {
+            this.$refs.musicPlay.getNextSong();
+        },
         //清空播放栏的歌曲时长
         cleanDur() {
             this.$refs.musicPlay.cleanDur();
         },
+        // 手机号登录
+        login() {
+            alert('手机号登录暂不可用,请使用二维码')
+            this.$http.get('login/cellphone', {
+                params: {
+                    phone: this.phone,
+                    password: this.password
+                }
+            }).then(() => {
+
+            })
+        },
+        // 二维码登录
+        // 1.二维码 key 生成接口
+        getQrKey() {
+            this.$http.get('/login/qr/key').then((res) => {
+                if (res.data.code == 200) {
+                    this.qrKey = res.data.data.unikey
+                    this.getQrCode()
+                }
+                else {
+                    alert('请求二维码key失败')
+                }
+            })
+        },
+        // 2.生成二维码
+        getQrCode() {
+            this.$http.get('/login/qr/create', {
+                params: {
+                    key: this.qrKey,
+                    qrimg: 1 // 获取二维码图片的 base64 编码
+                }
+            }).then(res => {
+                if (res.data.code === 200) {
+                    this.qrCode = res.data.data.qrimg
+                    this.checkQrCode()
+                } else {
+                    // 错误处理
+                    alert('生成二维码失败')
+                }
+            })
+        },
+        // 3.轮询二维码扫码状态
+        checkQrCode() {
+            if (this.stopPolling) return;  // 停止轮询
+            this.$http.get('/login/qr/check', {
+                params: {
+                    key: this.qrKey
+                }
+            }).then(res => {
+                console.log(res)
+
+                if (res.data.code === 801) {
+                    // 等待扫码，继续轮询
+                    setTimeout(() => {
+                        this.checkQrCode()
+                    }, 1000)
+                } else if (res.data.code === 802) {
+                    // 已扫码，待确认，继续轮询
+                    setTimeout(() => {
+                        this.checkQrCode()
+                    }, 1000)
+                } else if (res.data.code === 803) {
+                    // 授权登录成功
+                    this.loginSuccess(res.data.cookie)
+                } else {
+                    // 错误处理
+                    alert('扫码出错')
+                }
+            })
+        },
+        // 4.授权登录成功
+        loginSuccess(cookie) {
+
+            // 存储 cookie
+            this.$store.dispatch('setCookie', cookie)
+            // 刷新页面状态
+            this.$router.go(0)
+        },
+        // 获取用户详细信息
+        getAccountInfo() {
+            this.$http.post('/user/account', {
+                cookie: localStorage.getItem('cookie')
+            }).then((res) => {
+                this.accountId = res.data.account.id
+                this.getIdInfo()
+                this.getUserPlaylist()
+            })
+        },
+        // 获取ID详细信息
+        getIdInfo() {
+            this.$http({
+                url: '/user/detail',
+                methods: 'post',
+                params: {
+                    uid: this.accountId
+                },
+                data: {
+                    cookie: localStorage.getItem('cookie')
+                }
+            }).then((res) => {
+                this.userInfo.avatarUrl = res.data.profile.avatarUrl
+                this.userInfo.nickname = res.data.profile.nickname
+            })
+        },
+        // 退出登录
+        logout() {
+            this.$store.dispatch('setCookie', '')
+            this.$router.go(0)
+        },
+        // 获取二维码
+        tryQrCode(){
+            this.getQrKey()
+            this.showQrCode = true
+            this.stopPolling=false
+        },
+        // 获取用户歌单
+        getUserPlaylist() {
+            console.log(this.accountId)
+            this.$http({
+                url: '/user/playlist',
+                methods: 'post',
+                params: {
+                    uid: this.accountId
+                },
+                data: {
+                    cookie: localStorage.getItem('cookie')
+                }
+            }).then((res) => {
+                console.log(res)
+                this.$store.dispatch("savePersonalList", res.data.playlist);
+            }).catch((err) => {
+                console.log(err)
+            })
+        },
+    },
+    created() {
+        if (localStorage.getItem('cookie')) {
+            this.getAccountInfo()
+            
+        }
     }
 }
 </script>
@@ -235,6 +431,80 @@ export default {
     border: 1px solid #d8d8d8;
     padding: 5px 10px;
     opacity: 0.7;
+    cursor: pointer;
+}
+
+.login-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 3001;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    position: relative;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.input-container input {
+    width: 100%;
+    height: 40px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.login-button {
+    width: 100%;
+    height: 40px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.user-info {
+    width: 160px;
+    height: 40px;
+    position: absolute;
+    right: 20%;
+    top: 60px;
+    box-shadow: 0 0 10px #ccc;
+    z-index: 100;
+    line-height: 40px;
     cursor: pointer;
 }
 </style>

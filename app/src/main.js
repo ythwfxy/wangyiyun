@@ -4,6 +4,7 @@ import router from './router/index'
 import axios from 'axios'
 import store from './store'
 import '@/plugins/element.js'
+import '@/assets/styles/global.css'
 Vue.config.productionTip = false
 // 引入阿里图标
 import '@/assets/iconfonts/iconfont.css'

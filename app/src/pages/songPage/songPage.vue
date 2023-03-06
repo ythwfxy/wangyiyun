@@ -7,11 +7,10 @@
             </div>
             <div class="singUpright">
                 <div class="singInfo">
-                    <div class="singName">歌名</div>
+                    <div class="singName">{{ musicDetail.name || musicDetail.al.name }}</div>
                     <div class="singOther">
-                        <div class="singer">歌手:名字啊</div>
-                        <div class="album">专辑:专辑的名字</div>
-                        <div class="froms">来源:搜索</div>
+                        <div class="singer">歌手:{{ musicDetail.ar[0].name }}</div>
+                        <div class="album">专辑:{{ musicDetail.alia[0] || musicDetail.al.name }}</div>
                     </div>
                     <div class="lyric">
                         <!--歌词-->
@@ -28,17 +27,28 @@
                     </div>
                 </div>
             </div>
-            <div class="singDown">
-                <div class="comment"></div>
-                <div class="intro"></div>
+        </div>
+        <div class="singDown">
+            <commentInf :comment="comment" @getCommentPage="getCommentPage" class="comment"></commentInf>
+            <loveSong class="infor" :simiList="simiList" :simiSong="simiSong"></loveSong>
+        </div>
+        <div class="commit" @click="showCommit=true">
+            快点来说点什么吧
+        </div>
+        <div class="commit-wrapper" v-if="showCommit">
+            <div class="commit-input-wrapper">
+                <textarea v-model="myComment" type="text" class="commit-input" placeholder="请输入评论" />
+                <button class="commit-button" @click="commitComment">提交</button>
+                <span class="close-button" @click="showCommit = false">×</span>
             </div>
-
         </div>
     </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import commentInf from '@/components/songPage/comment.vue';
+import loveSong from '@/components/songPage/loveSong.vue';
 export default {
     data() {
         return {
@@ -48,11 +58,21 @@ export default {
             lrcObject: [],
             lyricIndex: 0,
             timerId: 0,
-            // 相似信息
-            simiInfo: [],
+            // 相似歌单
+            simiList: [],
             //歌曲评论
             comment: {},
+            // 相似歌曲
+            simiSong: [],
+            // 评论界面显示
+            showCommit: false,
+            // 提交评论
+            myComment:''
         };
+    },
+    components: {
+        commentInf,
+        loveSong
     },
     computed: {
         ...mapState([
@@ -62,7 +82,7 @@ export default {
             "musicDetail",
             //当前播放歌曲id
             "songId",
-            //判断当前是否在播放
+            //判断当前是否在播放 
             "isPlaying",
             //判断播放顺序模式
             "playOrd",
@@ -88,7 +108,6 @@ export default {
                     },
                 })
                 .then((res) => {
-                    console.log(res.data);
                     this.lyrics = res.data.lrc.lyric;
                     this.createLrcObj(this.lyrics);
                 });
@@ -127,24 +146,85 @@ export default {
             });
             this.lrcObject = oLRC.ms;
         },
+        // 获取歌曲评论
+        getCommentPage(page) {
+            console.log('songPage')
+            this.$http
+                .get("/comment/music", {
+                    params: { id: this.songId, limit: 20, offset: page * 20 },
+                })
+                .then((res) => {
+                    if (page == 0) {
+                        this.comment = res.data;
+                    } else {
+                        this.comment.comments = res.data.comments;
+                    }
+
+                });
+        },
+        // 获取相似歌单
+        getSimiList() {
+            this.$http.get("/simi/playlist", {
+                params: { id: this.songId }
+            }).then((res) => {
+                this.simiList = res.data.playlists
+            })
+        },
+        // 获取相似音乐
+        getSimiSong() {
+            this.$http.get("/simi/song", {
+                params: { id: this.songId }
+            }).then((res) => {
+                console.log(res)
+                this.simiSong = res.data.songs
+            })
+        },
+        // 提交评论
+        commitComment(){
+            if(!this.myComment){
+                alert("请输入内容")
+                return 
+            }
+            this.$http.get("/comment",{
+                params:{
+                    t:1,
+                    type:0,
+                    id:this.songId,
+                    content:this.myComment,
+                }
+            }).then((res)=>{
+                console.log(res)
+                if(res.data.status==200){
+                    alert('提交成功')
+                }
+                else{
+                    alert(res.data.msg)
+                }
+            })
+        }
     },
-    mounted() {
+    created() {
         this.getSongLyric(this.songId)
+        this.getCommentPage(0)
+        this.getSimiList()
+        this.getSimiSong()
     }
 }
 </script>
 
 <style scoped>
-/*滚动条样式*/
-::-webkit-scrollbar {
-    width: 4px;
+.singAll {
+    position: fixed;
+    height: 100vh;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    width: 1600px;
 }
 
-::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-    background: rgba(0, 0, 0, 0.2);
+.singAll:hover {
+    overflow-y: overlay;
 }
+
 
 li {
     list-style: none;
@@ -158,7 +238,7 @@ li {
 
 .singUpLeft {
     width: 50%;
-    transform: translate(50px,170px);
+    transform: translate(50px, 170px);
 }
 
 .singUpLeft img:first-child {
@@ -199,8 +279,7 @@ li {
 }
 
 .singer,
-.album,
-.froms {
+.album {
     margin-right: 20px;
 }
 
@@ -216,10 +295,83 @@ li {
     transition: scrollTop 0.3s;
     padding-right: 20px;
 }
+
 .showLyric:hover {
     /* 鼠标悬停时显示滚动条 */
     overflow-y: overlay;
 }
 
+.singDown {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.comment {
+    width: 1200px;
+}
+
+.infor {
+    width: 380px;
+    flex: 1;
+}
+
+.commit {
+    position: fixed;
+    bottom: 15%;
+    left: 50%;
+    border-radius: 30px;
+    background-color: #E9E9E9;
+    padding: 15px 20px;
+    cursor: pointer;
+}
+.commit-wrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  width: 300px;
+  height: 300px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.commit-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.commit-input {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 80%;
+  font-size: 16px;
+  height: 50%;
+}
+
+
+.commit-button {
+  margin: 0 10px;
+  padding: 10px;
+  border-radius: 5px;
+  color: #fff;
+  background-color: #42b983;
+  cursor: pointer;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  display: inline-block;
+}
 
 </style>

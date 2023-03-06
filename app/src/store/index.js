@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 Vue.use(Vuex)
 const state = {
+    cookie: localStorage.getItem('cookie') ? localStorage.getItem('cookie') : '',
     saveMusicUrl: '',
     searchInfo: sessionStorage.getItem('searchInfo') ? JSON.parse(sessionStorage.getItem('searchInfo')) : '',
     searchHistory: sessionStorage.getItem('searchHistory') ? JSON.parse(sessionStorage.getItem('searchHistory')) : [],
@@ -48,6 +49,8 @@ const state = {
     playOrd: sessionStorage.getItem('playOrd') ? JSON.parse(sessionStorage.getItem('playOrd')) : 0,
     //歌曲当前进度
     nowDuration: 0,
+    // 用户歌单
+    personalList: sessionStorage.getItem('personalList') ? JSON.parse(sessionStorage.getItem('personalList')) : [],
 }
 const mutations = {
     // 保存当前搜索信息
@@ -199,6 +202,15 @@ const mutations = {
             }
         }
     },
+    // cookie
+    SETCOOKIE(state,cookie){
+        localStorage.setItem('cookie', cookie)
+        state.cookie=cookie
+    },
+    // 保存用户信息
+    savePersonalList(state,personalList){
+        state.personalList=personalList
+    },
 }
 const actions = {
     // 保存当前搜索信息
@@ -279,6 +291,14 @@ const actions = {
     // 删除当前列表歌曲
     deletePlayListSong({ commit }, payload) {
         commit('deletePlayListSong', payload)
+    },
+    // 保存登录cookie信息
+    setCookie({ commit }, cookie) {
+        commit('SETCOOKIE', cookie)
+    },
+    // 保存用户歌单
+    savePersonalList({ commit }, payload) {
+        commit('savePersonalList', payload)
     },
 }
 export default new Vuex.Store({

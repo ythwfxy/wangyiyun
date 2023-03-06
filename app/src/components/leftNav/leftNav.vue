@@ -9,20 +9,25 @@
           <el-menu-item index="/home/findMusic">
             <span>发现音乐</span>
           </el-menu-item>
-          <el-menu-item index="/home/recomVideo">
-            <span>推荐视频</span>
+          <el-menu-item index="/home/myFM">
+            <span>私人FM</span>
           </el-menu-item>
         </div>
         <p class="leftNavFont">我的音乐</p>
-        <div>
-          <el-menu-item index="/home/myCloudMusic">
-            <span>我的音乐云盘</span>
+        <div v-if="this.personalList.length">
+          <el-menu-item :index='"/home/songList/" + personalList[0].id'>
+            <span>我喜欢的音乐</span>
+          </el-menu-item>
+        </div>
+        <div v-else>
+          <el-menu-item>
+            <span>请先登录后查看</span>
           </el-menu-item>
         </div>
         <p class="leftNavFont">创建的歌单</p>
-        <div>
-          <el-menu-item index="/home/123">
-            <span>歌单1</span>
+        <div v-if="this.personalList.length">
+          <el-menu-item v-for="(item, index2) in personalList.slice(1)" :key="index2" :index='"/home/songList/" + item.id'>
+            <span>{{ item.name }}</span>
           </el-menu-item>
         </div>
       </el-menu>
@@ -31,10 +36,11 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'leftNav',
-  mounted() {
-    console.log(this.$route.path)
+  computed: {
+    ...mapState(['personalList'])
   }
 }
 </script>
@@ -42,6 +48,10 @@ export default {
 <style scoped>
 .leftNav {
   text-align: left;
+  /* 加入滚动条 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 84vh;
 }
 
 .el-col {
