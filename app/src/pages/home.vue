@@ -5,10 +5,7 @@
             <!-- 头部 -->
             <el-header>
                 <img src="@/assets/logo.jpg" alt="" id="logo">
-                <span>网易云音乐</span>
-                <div class="back">
-                    <i class="el-icon-arrow-left"></i>
-                </div>
+                <span @click="toHome()" style="cursor: pointer;">网易云音乐</span>
                 <div class="search" @mouseenter="isClose = false" @mouseleave="isClose = true">
                     <el-input v-model="input" style="opacity: 0.5" placeholder="请输入内容" @keyup.enter.native="search"
                         @focus="showSuggest = true"></el-input>
@@ -309,12 +306,15 @@ export default {
                     cookie: localStorage.getItem('cookie')
                 }
             }).then((res) => {
-                console.log(res)
                 this.$store.dispatch("savePersonalList", res.data.playlist);
             }).catch((err) => {
                 console.log(err)
             })
         },
+        // 回到首页
+        toHome(){
+            this.$router.push({name:'findMusic'})
+        }
     },
     created() {
         if (localStorage.getItem('cookie')) {
@@ -335,7 +335,7 @@ export default {
 
 .search {
     display: flex;
-    margin-left: 50px;
+    margin-left: 150px;
     margin-top: 10px;
     width: 300px;
     position: relative;
@@ -355,19 +355,6 @@ export default {
     font-weight: 500;
     font-size: 20px;
     color: #ffffff;
-}
-
-.back {
-    width: 25px;
-    height: 25px;
-    text-align: center;
-    line-height: 25px;
-    margin-top: 13px;
-    margin-left: 30px;
-    color: #ffffff;
-    background: rgba(77, 71, 71, 0.1);
-    border-radius: 50%;
-    cursor: pointer;
 }
 
 .search-icon {

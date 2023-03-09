@@ -79,7 +79,7 @@
             left: 8px;
             color: #ec4141;
           " v-show="item.id === songId && isPlaying">
-                        <playAni />
+                        <playAnimation />
                     </div>
                     <i class="iconfont icon-zanting"
                         style="font-size: 10px; position: absolute; top: 2px; left: 8px; color: #ec4141"

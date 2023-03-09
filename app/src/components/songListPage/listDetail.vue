@@ -9,26 +9,16 @@
       ></el-image>
       <!-- 歌单名 -->
       <div class="listName">
-        <div
-          style="
-            color: #d03535;
-            border: 1px solid #d03535;
-            display: inline-block;
-            font-size: 20px;
-            margin-right: 10px;
-            border-radius: 5px;
-            padding: 0 7px;
-            cursor: default;
-          "
-        >
+        <div style="color: #d03535;border: 1px solid #d03535;display: inline-block;font-size: 20px;margin-right: 10px;border-radius: 5px;
+padding: 0 7px;cursor: default;">
           歌单
         </div>
         {{ playList.name }}
       </div>
       <!-- 作者信息 -->
-      <div class="creator">
+      <div class="creator" v-if="playList.creator">
         <!-- 作者头像 -->
-        <el-image
+        <el-image 
           :src="playList.creator.avatarUrl"
           fit="fill"
           style="border-radius: 40px; height: 40px; width: 40px; vertical-align: middle"

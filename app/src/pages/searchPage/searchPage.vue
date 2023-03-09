@@ -9,7 +9,7 @@
             </el-menu>
         </div>
         <div>
-            <router-view id="secondRoute" ref="songPage" :songAll="songAll" @getSongPage="getSongPage"> </router-view>
+            <router-view id="secondRoute" ref="songPage" :songAll="songAll"  @getSongPage="getSongPage"> </router-view>
         </div>
     </div>
 </template>

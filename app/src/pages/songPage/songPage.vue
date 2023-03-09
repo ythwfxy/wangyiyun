@@ -2,8 +2,8 @@
     <div class="singAll">
         <div class="singUp">
             <div class="singUpLeft">
-                <img src="@/assets/imgs/disc.png" alt="">
-                <img :src="musicDetail.al.picUrl" alt="">
+                <img :style="{ animationPlayState: isPlaying ? 'running' : 'paused' }" src="@/assets/imgs/disc.png" alt="">
+                <img :style="{ animationPlayState: isPlaying ? 'running' : 'paused' }" :src="musicDetail.al.picUrl" alt="">
             </div>
             <div class="singUpright">
                 <div class="singInfo">
@@ -17,8 +17,7 @@
                         <div class="showLyric" ref="lyricScroll">
                             <ul ref="lyric" v-if="lrcObject.length > 1">
                                 <li v-for="(item, index) in lrcObject" :key="index"
-                                    :style="{ color: lyricIndex === index ? 'red' : 'black' }"
-                                    :ref="[lyricIndex === index ? 'lyricRef' : '']">
+                                    :style="{ color: lyricIndex === index ? 'red' : 'black' }">
                                     {{ item.c }}
                                 </li>
                             </ul>
@@ -32,7 +31,7 @@
             <commentInf :comment="comment" @getCommentPage="getCommentPage" class="comment"></commentInf>
             <loveSong class="infor" :simiList="simiList" :simiSong="simiSong"></loveSong>
         </div>
-        <div class="commit" @click="showCommit=true">
+        <div class="commit" @click="showCommit = true">
             快点来说点什么吧
         </div>
         <div class="commit-wrapper" v-if="showCommit">
@@ -67,12 +66,43 @@ export default {
             // 评论界面显示
             showCommit: false,
             // 提交评论
-            myComment:''
+            myComment: ''
         };
     },
     components: {
         commentInf,
         loveSong
+    },
+    watch: {
+        //切换了歌曲时
+        songId() {
+            this.lyricIndex = 0;
+            this.getSongLyric(this.songId);
+            this.getSongComment(0);
+            this.getSongSimi(this.songId);
+            this.$refs.comment.backNumOne();
+        },
+        //歌曲进度条变化
+        nowDuration() {
+            //对每次进来的进度条进行判断
+            // 跟下一句台词时长是否匹配,如果匹配则当前高亮的索引值+1
+            //使用循环找到最接近当前播放时间的歌词
+            for (let i = 0; i < this.lrcObject.length; i++) {
+                //这里使用小于符号判断是为了 保证回退音乐进度事件的效果实现性
+                if (this.nowDuration <= parseFloat(this.lrcObject[i].t)) {
+                    if (this.lyricIndex === i - 1) {
+                        break;
+                    }
+                    //找到比当前时间点 大一点的后一位的歌词的索引值
+                    this.lyricIndex = i - 1;
+                    //如果当前是最后一句歌词 代表歌曲要放送结束了 将我们的lyricIndex(当前歌词索引值还原成0便于下一曲使用)
+                    if (this.lyricIndex === this.lrcObject.length - 1) {
+                        this.lyricIndex = 0;
+                    }
+                    break;
+                }
+            }
+        },
     },
     computed: {
         ...mapState([
@@ -180,24 +210,24 @@ export default {
             })
         },
         // 提交评论
-        commitComment(){
-            if(!this.myComment){
+        commitComment() {
+            if (!this.myComment) {
                 alert("请输入内容")
-                return 
+                return
             }
-            this.$http.get("/comment",{
-                params:{
-                    t:1,
-                    type:0,
-                    id:this.songId,
-                    content:this.myComment,
+            this.$http.get("/comment", {
+                params: {
+                    t: 1,
+                    type: 0,
+                    id: this.songId,
+                    content: this.myComment,
                 }
-            }).then((res)=>{
+            }).then((res) => {
                 console.log(res)
-                if(res.data.status==200){
+                if (res.data.status == 200) {
                     alert('提交成功')
                 }
-                else{
+                else {
                     alert(res.data.msg)
                 }
             })
@@ -244,8 +274,19 @@ li {
 .singUpLeft img:first-child {
     width: 350px;
     height: 350px;
+    animation-name: record;
+    animation-duration: 20s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
 }
-
+@keyframes record {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 .singUpLeft img:last-child {
     position: relative;
     top: -77px;
@@ -253,6 +294,10 @@ li {
     width: 195px;
     height: 195px;
     border-radius: 50%;
+    animation-name: record;
+    animation-duration: 20s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
 }
 
 .singInfo {
@@ -294,6 +339,8 @@ li {
     margin-top: 100px;
     transition: scrollTop 0.3s;
     padding-right: 20px;
+    background-color: rgba(111, 147, 163, 0.3);
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3); ;
 }
 
 .showLyric:hover {
@@ -325,53 +372,53 @@ li {
     padding: 15px 20px;
     cursor: pointer;
 }
+
 .commit-wrapper {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  width: 300px;
-  height: 300px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    width: 300px;
+    height: 300px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .commit-input-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 
 .commit-input {
-  margin-bottom: 20px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 80%;
-  font-size: 16px;
-  height: 50%;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 80%;
+    font-size: 16px;
+    height: 50%;
 }
 
 
 .commit-button {
-  margin: 0 10px;
-  padding: 10px;
-  border-radius: 5px;
-  color: #fff;
-  background-color: #42b983;
-  cursor: pointer;
+    margin: 0 10px;
+    padding: 10px;
+    border-radius: 5px;
+    color: #fff;
+    background-color: #42b983;
+    cursor: pointer;
 }
 
 .close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 20px;
-  cursor: pointer;
-  display: inline-block;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    display: inline-block;
 }
-
 </style>

@@ -1,7 +1,7 @@
 <template>
     <div class="musicPlay">
         <audio ref="audio" :src="musicUrl" autoplay class="musicAudio" @timeupdate="durationUpdate"
-      @ended="getNextSong"></audio>
+            @ended="getNextSong"></audio>
         <div class="songDetail" v-show="musicDetail.al.picUrl !== ''">
             <!-- 封面 -->
             <el-image :src="musicDetail.al.picUrl" fit="fill"
@@ -12,13 +12,13 @@
                     musicDetail.name
                 }}</span>
                 <span style="cursor: pointer">{{
-                !musicDetail.alia[0] ? "" : "(" + musicDetail.alia[0] + ")"
+                    !musicDetail.alia[0] ? "" : "(" + musicDetail.alia[0] + ")"
                 }}</span>
             </div>
             <!-- 作者名 -->
             <div class="authorName">
                 <span v-for="(item, index) in musicDetail.ar" :key="index" style="cursor: pointer; font-size: 5px">{{
-                index === 0 ? item.name : "/" + item.name }}</span>
+                    index === 0 ? item.name : "/" + item.name }}</span>
             </div>
 
         </div>
@@ -69,7 +69,7 @@
         </div>
         <!-- 播放进度条 -->
         <span style="position: absolute; right: 72%; bottom: 12%; opacity: 0.7">{{
-            this.musicDetail.name === "" ? 0 : this.musicDuration  | timeFormat
+            this.musicDetail.name === "" ? 0 : this.musicDuration | timeFormat
         }}</span>
         <div id="playSlider">
             <el-slider v-model="musicDuration" :max="Math.floor(this.musicDetail.dt / 1000)" :show-tooltip="false"
@@ -78,8 +78,8 @@
         </div>
         <span style="position: absolute; left: 72%; bottom: 12%; opacity: 0.7">{{
             this.musicDetail.name === ""
-                ? 0
-                : this.musicDetail.dt | myFilter
+            ? 0
+            : this.musicDetail.dt | myFilter
         }}</span>
         <!-- 声音 -->
         <div class="volume">
@@ -96,7 +96,6 @@
                 style="position: absolute;right: 45px;top: 30px;font-size: 24px;cursor: pointer;"></i>
         </el-tooltip>
     </div>
-
 </template>
 
 <script>
@@ -113,6 +112,11 @@ export default {
             volumeVal: 50,
             //当前音量
             nowVolume: 50,
+        }
+    },
+    watch: {
+        musicUrl() {
+            this.$store.dispatch("saveIsPlaying", true);
         }
     },
     computed: {
@@ -146,7 +150,6 @@ export default {
         //更新当前时长
         durationUpdate() {
             if (this.isChange === true) return;
-            console.log(this.musicDuration)
             this.musicDuration = this.$refs.audio.currentTime + this.playDur[0];
             this.$store.dispatch("saveNowDuration", this.musicDuration);
             // this.musicDuration++;
@@ -184,7 +187,6 @@ export default {
                 return;
             }
             this.$refs.audio.currentTime = this.musicDuration - this.playDur[0];
-            // this.$store.dispatch("saveIsPlaying", true);
             this.isChange = false;
         },
         //音量改变时
@@ -415,7 +417,7 @@ export default {
                     this.$store.dispatch("saveMusicUrl", res.data.data[0].url);
                 });
         },
-        toSongPage(){
+        toSongPage() {
             this.$router.push('/home/songPage')
         }
     },

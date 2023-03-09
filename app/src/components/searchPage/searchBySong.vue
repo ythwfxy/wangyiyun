@@ -12,34 +12,34 @@
         </span>
         <span style="position: absolute; left: 85%; color: #888888; font-size: 15px">时长</span>
       </div>
-      <div :class="{ songMesSin: index % 2 !== 0, songMesDou: index % 2 === 0 }"
-        v-for="(item, index) in songAll.songList" :key="index" background="#f9f9f9" @dblclick="startSong(item)"
-        @mouseenter="currentIndex = index" @mouseleave="currentIndex = -1">
+      <div :class="{ songMesSin: index % 2 !== 0, songMesDou: index % 2 === 0 }" v-for="(item, index) in songAll.songList"
+        :key="index" background="#f9f9f9" @dblclick="startSong(item)" @mouseenter="currentIndex = index"
+        @mouseleave="currentIndex = -1">
         <!-- 播放或暂停音乐动画表情 -->
         <div style="
-            font-size: 10px;
-            position: absolute;
-            top: 20px;
-            left: 28px;
-            color: #ec4141;
-          " v-if="item.id === songId && isPlaying">
+              font-size: 10px;
+              position: absolute;
+              top: 20px;
+              left: 28px;
+              color: #ec4141;
+            " v-if="item.id === songId && isPlaying">
           <playAnimation />
         </div>
         <i class="iconfont icon-zanting" style="
-            font-size: 10px;
-            position: absolute;
-            top: 2px;
-            left: 28px;
-            color: #ec4141;
-          " v-else-if="item.id === songId && !isPlaying"></i>
+              font-size: 10px;
+              position: absolute;
+              top: 2px;
+              left: 28px;
+              color: #ec4141;
+            " v-else-if="item.id === songId && !isPlaying"></i>
         <!-- 歌曲序号 -->
         <span style="
-            font-size: 15px !important;
-            position: absolute;
-            top: 2px;
-            left: 25px;
-            color: #373737;
-          " v-else>{{ index >= 9 ? index + 1 : "0" + (index + 1) }}</span>
+              font-size: 15px !important;
+              position: absolute;
+              top: 2px;
+              left: 25px;
+              color: #373737;
+            " v-else>{{ index >= 9 ? index + 1 : "0" + (index + 1) }}</span>
         <!-- 歌曲名 -->
         <div :class="{
           pauseSongName: item.id !== songId,
@@ -50,11 +50,11 @@
             item.name
           }}</span>
           <span style="color: #949495" :title="item.name + (!item.alia[0] ? '' : '(' + item.alia[0] + ')')">{{
-          !item.alia[0] ? "" : "(" + item.alia[0] + ")" }}</span>
+            !item.alia[0] ? "" : "(" + item.alia[0] + ")" }}</span>
         </div>
         <!-- 歌曲功能 -->
         <div class="songFunc" v-show="index === currentIndex">
-          <i class="iconfont icon-aixin" style="opacity: 0.9; cursor: pointer"></i>
+          <i class="iconfont icon-aixin" @click="addLove(item)" title="添加到我的喜欢" style="opacity: 0.9; cursor: pointer"></i>
           <i class="iconfont icon-tianjia" style="opacity: 0.9; cursor: pointer; margin-left: 10px" title="添加到播放列表"
             @click="addList(item)"></i>
           <i class="iconfont icon-7" style="opacity: 0.9; cursor: pointer; margin-left: 10px" title="分享"></i>
@@ -62,28 +62,28 @@
         <!-- 作者名 -->
         <div class="startSongAurtor" style="position: absolute; left: 45%">
           <div style="
-              width: 160px;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              overflow: hidden;
-              word-break: break-all;
-            ">
-            <span style="cursor: pointer" v-for="(item, index) in item.ar" :key="index"
-              @click="toArtistPage(item.id)">{{ index === 0 ? item.name : "/" + item.name }}</span>
+                width: 160px;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                word-break: break-all;
+              ">
+            <span style="cursor: pointer" v-for="(item, index) in item.ar" :key="index" @click="toArtistPage(item.id)">{{
+              index === 0 ? item.name : "/" + item.name }}</span>
           </div>
         </div>
         <!-- 专辑 -->
         <div style="
-            width: 15%;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            word-break: break-all;
-            position: absolute;
-            left: 65%;
-            cursor: pointer;
-            font-weight: 300;
-          " @click="toAlbumPage(item.al.id)">
+              width: 15%;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              word-break: break-all;
+              position: absolute;
+              left: 65%;
+              cursor: pointer;
+              font-weight: 300;
+            " @click="toAlbumPage(item.al.id)">
           {{ item.al.name }}
         </div>
         <!-- 时长 -->
@@ -136,6 +136,28 @@ export default {
     };
   },
   methods: {
+    // 添加到喜欢列表
+    addLove(song) {
+      this.$http({
+        url: '/like',
+        methods: 'post',
+        params: {
+          id: song.id
+        },
+        data: {
+          cookie: localStorage.getItem('cookie')
+        }
+      }).then(res => {
+        if (res.data.code == 200) {
+          alert("成功添加到喜欢列表")
+        }else if(res.data.code==302){
+          alert("请先登录")
+        }else{
+          alert("添加失败")
+        }
+
+      })
+    },
     // 双击切换到当前播放
     startSong(musicDetail) {
       if (musicDetail.id === this.songId) return;
@@ -209,6 +231,7 @@ export default {
           },
         })
         .then((res) => {
+          console.log("123", res)
           if (res.data.data[0].freeTrialInfo) {
             this.$store.dispatch("saveAur", [
               res.data.data[0].freeTrialInfo.start,
@@ -222,7 +245,6 @@ export default {
     },
     //获取指定页数歌曲
     getSongPage(offset, type) {
-      console.log(type)
       this.$emit("getSongPage", offset, type);
     },
     //返回第一页

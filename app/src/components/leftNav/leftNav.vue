@@ -46,6 +46,9 @@ export default {
 </script>
 
 <style scoped>
+body{
+  font-size: 14px;
+}
 .leftNav {
   text-align: left;
   /* 加入滚动条 */
@@ -73,6 +76,7 @@ export default {
 
 .el-menu-item.is-active {
   background-color: #e6e7ea !important;
+  font-size: 14px;
 }
 
 .el-menu-item:hover {

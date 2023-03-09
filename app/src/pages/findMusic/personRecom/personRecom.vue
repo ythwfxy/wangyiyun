@@ -179,7 +179,39 @@ export default {
         this.$store.dispatch("pushPlayList", this.musicDetail);
       }
     },
-    
+    //根据id获取音乐url
+    async getMusicUrl(musicId) {
+      await this.$http
+        .get("song/url", {
+          params: {
+            id: musicId,
+          },
+        })
+        .then((res) => {
+          if (res.data.data[0].freeTrialInfo) {
+            this.$store.dispatch("saveAur", [
+              res.data.data[0].freeTrialInfo.start,
+              res.data.data[0].freeTrialInfo.end,
+            ]);
+          } else {
+            this.$store.dispatch("saveAur", [-1, 0]);
+          }
+          this.musicUrl = res.data.data[0].url;
+        });
+    },
+    //根据id获取音乐详情
+    async getMusicDetail(musicId) {
+      await this.$http
+        .get("song/detail", {
+          params: {
+            ids: musicId,
+          },
+        })
+        .then((res) => {
+          this.musicDetail = res.data.songs[0];
+        });
+    },
+
 
   },
   mounted() {
@@ -192,6 +224,4 @@ export default {
 }
 </script>
 
-<style>
-
-</style>
+<style></style>
