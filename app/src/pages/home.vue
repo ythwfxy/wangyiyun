@@ -222,9 +222,11 @@ export default {
         // 3.轮询二维码扫码状态
         checkQrCode() {
             if (this.stopPolling) return;  // 停止轮询
-            this.$http.get('/login/qr/check', {
+            const timestamp = new Date().getTime();
+            this.$http.get(`/login/qr/check?`, {
                 params: {
-                    key: this.qrKey
+                    key: this.qrKey,
+                    timestamp
                 }
             }).then(res => {
                 console.log(res)
@@ -233,12 +235,12 @@ export default {
                     // 等待扫码，继续轮询
                     setTimeout(() => {
                         this.checkQrCode()
-                    }, 1000)
+                    }, 5000)
                 } else if (res.data.code === 802) {
                     // 已扫码，待确认，继续轮询
                     setTimeout(() => {
                         this.checkQrCode()
-                    }, 1000)
+                    }, 5000)
                 } else if (res.data.code === 803) {
                     // 授权登录成功
                     this.loginSuccess(res.data.cookie)

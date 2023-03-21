@@ -16,7 +16,7 @@ const state = {
         alia: {
             name: "",
         },
-        name: "",
+        name: "", 
     },
     //当前歌曲id
     songId: sessionStorage.getItem('songId') ? JSON.parse(sessionStorage.getItem('songId')) : "",

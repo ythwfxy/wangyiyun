@@ -118,38 +118,47 @@ export default {
     },
     methods: {
         // 下一首
-        nextSong() {
+        async nextSong() {
             if (this.count === this.FMList.length - 1) {
-                this.getFM()
+                
+                await this.getFM(false)
                 this.count = 0
+                
             }
             else {
-                this.count++
+
                 Promise.all([
-                    this.getSongLyric(this.FMList[this.count].id),
-                    this.getSongDetail(this.FMList[this.count].id),
+                    this.getSongLyric(this.FMList[this.count + 1].id),
+                    this.getSongDetail(this.FMList[this.count + 1].id),
                 ]).then(() => {
                     this.startSong(this.musicDetail)
+                    this.count++
                 })
             }
 
         },
         // 获取私人FM
-        async getFM() {
-            await this.$http.post('/personal_fm', {
-                cookie: localStorage.getItem('cookie')
-            }).then((res) => {
+        async getFM(change) {
+            const timestamp = new Date().getTime();
+            await this.$http.post(`/personal_fm?timestamp=${timestamp}`, {
+                cookie: localStorage.getItem('cookie'),
+            }, ).then((res) => {
+                console.log("FM", res)
                 this.FMList = res.data.data
-                for (let i = 0; i < 3; i++) {
-                    if (this.FMList[this.count].id == this.songId) {
-                        this.getSongLyric(this.songId)
-                        this.getSongDetail(this.songId)
-                        return 
+                if (change) {
+                    for (let i = 0; i < this.FMList.length; i++) {
+                        if (this.FMList[i].id == this.songId) {
+                            this.count = i
+                            this.getSongLyric(this.songId)
+                            this.getSongDetail(this.songId)
+                            return
+                        }
                     }
                 }
+
                 Promise.all([
-                    this.getSongLyric(this.FMList[this.count].id),
-                    this.getSongDetail(this.FMList[this.count].id),
+                    this.getSongLyric(this.FMList[0].id),
+                    this.getSongDetail(this.FMList[0].id),
                 ]).then(() => {
                     this.startSong(this.musicDetail)
                 })
@@ -250,11 +259,11 @@ export default {
             this.$store.dispatch("pushPlayList", musicDetail);
         },
         //根据id获取音乐url
-        async getMusicUrl() {
+        async getMusicUrl(songId) {
             await this.$http
                 .get("/song/url", {
                     params: {
-                        id: this.FMList[this.count].id
+                        id: songId
                     },
                 })
                 .then((res) => {
@@ -271,10 +280,10 @@ export default {
                 });
         },
         // 获取歌曲详细
-        async getSongDetail() {
+        async getSongDetail(songId) {
             await this.$http.get("/song/detail", {
                 params: {
-                    ids: this.FMList[this.count].id
+                    ids: songId
                 }
             }).then(res => {
                 this.$store.dispatch("saveMusicDetail", res.data.songs[0]);
@@ -310,7 +319,7 @@ export default {
     },
     created() {
 
-        this.getFM()
+        this.getFM(true)
     }
 }
 </script> 

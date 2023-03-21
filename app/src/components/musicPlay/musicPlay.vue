@@ -139,6 +139,8 @@ export default {
             "slider",
             //播放范围
             "playDur",
+            // 历史播放列表
+            "hisMusicList"
         ])
     },
     methods: {
@@ -357,6 +359,11 @@ export default {
             }
             this.startSong(this.playList[index - 1]);
         },
+        //重复播放音乐
+        rePlaySong() {
+            this.$store.dispatch("saveIsPlaying", true);
+            this.$refs.audio.load();
+        },
         //随机播放
         randomPlay() {
             //接受子组件传来的数据
@@ -383,9 +390,9 @@ export default {
         },
         // 开始播放
         startSong(musicDetail) {
-            if (musicDetail.id === this.songId) return;
+            if (musicDetail.id === this.songId) return; 
             // 获得音乐url
-            this.getMusicUrl(musicDetail.id);
+            this.getMusicUrl(musicDetail.id); 
             // 保存到当前播放歌曲详情
             this.$store.dispatch("saveMusicDetail", musicDetail);
             // 保存到当前播放歌曲id
