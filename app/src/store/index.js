@@ -20,18 +20,6 @@ const state = {
     },
     //当前歌曲id
     songId: sessionStorage.getItem('songId') ? JSON.parse(sessionStorage.getItem('songId')) : "",
-    // 删除历史播放歌曲
-    deleteHisListSong(state, songId) {
-        for (let song of state.hisMusicList) {
-            if (song.id === songId) {
-                let index = state.hisMusicList.indexOf(song);
-                if (index !== -1) {
-                    state.hisMusicList.splice(index, 1);
-                    break;
-                }
-            }
-        }
-    },
     //历史歌曲播放列表
     hisMusicList: sessionStorage.getItem('hisMusicList') ? JSON.parse(sessionStorage.getItem('hisMusicList')) : [],
     //播放过的歌曲歌单(避免上一首或者随机播放播放到重复的歌曲)
