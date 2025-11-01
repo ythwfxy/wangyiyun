@@ -9,6 +9,9 @@
           <el-menu-item index="/home/findMusic">
             <span>发现音乐</span>
           </el-menu-item>
+          <el-menu-item index="/home/ftp">
+            <span>FTP文件管理</span>
+          </el-menu-item>
           <el-menu-item index="/home/myFM">
             <span>私人FM</span>
           </el-menu-item>
