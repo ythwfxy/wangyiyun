@@ -92,20 +92,25 @@ const router = new VueRouter({
             },
             // 歌手页面
             {
-                path:'/home/artistPage/:id',
-                component:()=>
+                path: '/home/artistPage/:id',
+                component: () =>
                     import('@/pages/artistPage/artistPage')
+            },
+            {
+                path: '/home/ftp',
+                component: () =>
+                    import('@/pages/ftp/ftp')
             },
             // 歌曲详情界面
             {
-                path:'/home/songPage',
-                component:()=>
+                path: '/home/songPage',
+                component: () =>
                     import('@/pages/songPage/songPage')
             },
             // 私人FM
             {
-                path:'/home/myFM',
-                component:()=>
+                path: '/home/myFM',
+                component: () =>
                     import('@/pages/myFM/myFM')
             }
         ]
