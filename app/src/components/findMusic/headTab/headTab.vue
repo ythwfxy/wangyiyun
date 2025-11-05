@@ -23,7 +23,7 @@ export default {
 <style>
 .el-menu-item.is-active {
   border-color: #ec4141;
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 400;
 }
 /* 整体的下划线进行隐藏 */
