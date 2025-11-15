@@ -107,6 +107,12 @@ const router = new VueRouter({
                 path:'/home/myFM',
                 component:()=>
                     import('@/pages/myFM/myFM')
+            },
+            // 创作者作品集管理
+            {
+                path:'/home/creator-works',
+                component:()=>
+                    import('@/pages/creatorWorks/creatorWorks')
             }
         ]
     }]

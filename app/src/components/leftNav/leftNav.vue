@@ -13,6 +13,13 @@
             <span>私人FM</span>
           </el-menu-item>
         </div>
+        <!-- 创作者作品集管理 -->
+        <p class="leftNavFont">创作者中心</p>
+        <div>
+          <el-menu-item index="/home/creator-works">
+            <span>作品管理</span>
+          </el-menu-item>
+        </div>
         <p class="leftNavFont">我的音乐</p>
         <div v-if="this.personalList.length">
           <el-menu-item :index='"/home/songList/" + personalList[0].id'>
