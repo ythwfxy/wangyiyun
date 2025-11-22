@@ -103,10 +103,16 @@ const router = new VueRouter({
                     import('@/pages/songPage/songPage')
             },
             // 私人FM
-            {
+            { 
                 path:'/home/myFM',
                 component:()=>
                     import('@/pages/myFM/myFM')
+            },
+            // 音乐评论互动管理
+            { 
+                path:'/home/music-comment',
+                component:()=>
+                    import('@/pages/musicComment/musicComment')
             }
         ]
     }]

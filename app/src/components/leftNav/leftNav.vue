@@ -24,6 +24,11 @@
             <span>请先登录后查看</span>
           </el-menu-item>
         </div>
+        <div>
+          <el-menu-item index="/home/music-comment">
+            <span>音乐评论互动管理</span>
+          </el-menu-item>
+        </div>
         <p class="leftNavFont">创建的歌单</p>
         <div v-if="this.personalList.length">
           <el-menu-item v-for="(item, index2) in personalList.slice(1)" :key="index2" :index='"/home/songList/" + item.id'>
@@ -77,6 +82,8 @@ body{
 .el-menu-item.is-active {
   background-color: #e6e7ea !important;
   font-size: 14px;
+  border-left: 4px solid #ff2a2a;
+  padding-left: 12px !important;
 }
 
 .el-menu-item:hover {

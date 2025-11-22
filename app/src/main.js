@@ -8,6 +8,15 @@ import '@/assets/styles/global.css'
 Vue.config.productionTip = false
 // 引入阿里图标
 import '@/assets/iconfonts/iconfont.css'
+// 引入vue-lazyload
+import VueLazyload from 'vue-lazyload'
+// 注册vue-lazyload
+Vue.use(VueLazyload, {
+  preLoad: 1.3,
+  error: 'https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg',
+  loading: 'https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg',
+  attempt: 1
+})
 // 配置axios
 axios.defaults.baseURL = 'http://localhost:3000/'
 Vue.prototype.$http = axios
