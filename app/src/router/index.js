@@ -107,6 +107,12 @@ const router = new VueRouter({
                 path:'/home/myFM',
                 component:()=>
                     import('@/pages/myFM/myFM')
+            },
+            // 收藏歌单管理
+            {
+                path:'/home/collect-playlist',
+                component:()=>
+                    import('@/pages/collectPlaylist/collectPlaylist')
             }
         ]
     }]
