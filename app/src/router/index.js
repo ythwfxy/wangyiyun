@@ -96,6 +96,12 @@ const router = new VueRouter({
                 component:()=>
                     import('@/pages/artistPage/artistPage')
             },
+            // 音乐心情日记
+            {                
+                path:'/home/music-diary',
+                component:()=>
+                    import('@/pages/musicDiary/musicDiary')
+            },
             // 歌曲详情界面
             {
                 path:'/home/songPage',

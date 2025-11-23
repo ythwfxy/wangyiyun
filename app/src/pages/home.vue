@@ -485,6 +485,17 @@ export default {
     margin-top: 20px;
 }
 
+.el-aside {
+    width: 250px !important;
+    background-color: #f5f5f5;
+}
+
+.el-main {
+    margin-left: 250px;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
 .user-info {
     width: 160px;
     height: 40px;
