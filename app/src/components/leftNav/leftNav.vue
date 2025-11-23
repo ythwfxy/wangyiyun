@@ -18,6 +18,9 @@
           <el-menu-item :index='"/home/songList/" + personalList[0].id'>
             <span>我喜欢的音乐</span>
           </el-menu-item>
+          <el-menu-item index="/home/music-diary">
+            <span>音乐心情日记</span>
+          </el-menu-item>
         </div>
         <div v-else>
           <el-menu-item>
@@ -77,6 +80,8 @@ body{
 .el-menu-item.is-active {
   background-color: #e6e7ea !important;
   font-size: 14px;
+  border-left: 4px solid #ff2a2a;
+  padding-left: 12px !important;
 }
 
 .el-menu-item:hover {
