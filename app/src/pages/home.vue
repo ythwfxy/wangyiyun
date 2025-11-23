@@ -397,6 +397,17 @@ export default {
     right: 120px;
 }
 
+.el-aside {
+    width: 250px !important;
+    background-color: #f5f5f5;
+}
+
+.el-main {
+    margin-left: 250px;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
 .searchAbout {
     position: absolute;
     top: 30px;
