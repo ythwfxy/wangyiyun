@@ -30,6 +30,11 @@
             <span>{{ item.name }}</span>
           </el-menu-item>
         </div>
+        <div>
+          <el-menu-item index="/home/collect-playlist">
+            <span>收藏歌单管理</span>
+          </el-menu-item>
+        </div>
       </el-menu>
     </el-col>
   </div>
@@ -77,6 +82,8 @@ body{
 .el-menu-item.is-active {
   background-color: #e6e7ea !important;
   font-size: 14px;
+  border-left: 4px solid #ff2a2a;
+  padding-left: 8px !important;
 }
 
 .el-menu-item:hover {
