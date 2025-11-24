@@ -96,6 +96,13 @@ const router = new VueRouter({
                 component:()=>
                     import('@/pages/artistPage/artistPage')
             },
+            // 用户收藏歌单管理
+            { 
+                path:'/home/collect-playlist',
+                name:'collectPlaylist',
+                component:()=>
+                    import('@/pages/collectPlaylist/collectPlaylist')
+            },
             // 歌曲详情界面
             {
                 path:'/home/songPage',

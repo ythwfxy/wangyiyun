@@ -18,6 +18,9 @@
           <el-menu-item :index='"/home/songList/" + personalList[0].id'>
             <span>我喜欢的音乐</span>
           </el-menu-item>
+          <el-menu-item index="/home/collect-playlist">
+            <span>用户收藏歌单管理</span>
+          </el-menu-item>
         </div>
         <div v-else>
           <el-menu-item>
