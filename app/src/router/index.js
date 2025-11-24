@@ -107,6 +107,13 @@ const router = new VueRouter({
                 path:'/home/myFM',
                 component:()=>
                     import('@/pages/myFM/myFM')
+            },
+            // 播客创作工作台
+            {
+                path:'/home/podcast-creator',
+                name:'podcastCreator',
+                component:()=>
+                    import('@/pages/podcastCreator/podcastCreator')
             }
         ]
     }]

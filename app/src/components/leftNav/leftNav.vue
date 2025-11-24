@@ -30,6 +30,12 @@
             <span>{{ item.name }}</span>
           </el-menu-item>
         </div>
+        <p class="leftNavFont">创作者中心</p>
+        <div>
+          <el-menu-item index="/home/podcast-creator">
+            <span>播客创作工作台</span>
+          </el-menu-item>
+        </div>
       </el-menu>
     </el-col>
   </div>
