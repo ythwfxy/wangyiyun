@@ -9,8 +9,13 @@
           <el-menu-item index="/home/findMusic">
             <span>发现音乐</span>
           </el-menu-item>
+        </div>
+        <div>
           <el-menu-item index="/home/myFM">
             <span>私人FM</span>
+          </el-menu-item>
+          <el-menu-item index="/home/music-circle">
+            <span>音乐圈子</span>
           </el-menu-item>
         </div>
         <p class="leftNavFont">我的音乐</p>
