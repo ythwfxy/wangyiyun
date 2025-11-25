@@ -30,6 +30,12 @@
             <span>{{ item.name }}</span>
           </el-menu-item>
         </div>
+        <p class="leftNavFont">创作者中心</p>
+        <div>
+          <el-menu-item index="/home/podcast-live-admin">
+            <span>播客直播管理</span>
+          </el-menu-item>
+        </div>
       </el-menu>
     </el-col>
   </div>

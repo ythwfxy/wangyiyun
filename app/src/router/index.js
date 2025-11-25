@@ -107,6 +107,12 @@ const router = new VueRouter({
                 path:'/home/myFM',
                 component:()=>
                     import('@/pages/myFM/myFM')
+            },
+            // 播客直播管理
+            {
+                path:'/home/podcast-live-admin',
+                component:()=>
+                    import('@/pages/podcastLiveAdmin/podcastLiveAdmin')
             }
         ]
     }]
