@@ -96,6 +96,12 @@ const router = new VueRouter({
                 component:()=>
                     import('@/pages/artistPage/artistPage')
             },
+            // 播客创作工作台
+            {
+                path:'/home/podcast-creator',
+                component:()=>
+                    import('@/pages/podcastCreator/podcastCreator')
+            },
             // 歌曲详情界面
             {
                 path:'/home/songPage',
