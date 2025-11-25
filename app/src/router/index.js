@@ -91,10 +91,16 @@ const router = new VueRouter({
                     import('@/pages/songListPage/songListPage'),
             },
             // 歌手页面
-            {
+            { 
                 path:'/home/artistPage/:id',
                 component:()=>
                     import('@/pages/artistPage/artistPage')
+            },
+            // 音乐时光机
+            { 
+                path:'/home/music-time-machine',
+                component:()=>
+                    import('@/pages/musicTimeMachine/musicTimeMachine')
             },
             // 歌曲详情界面
             {
