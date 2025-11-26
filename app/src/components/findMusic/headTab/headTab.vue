@@ -10,6 +10,7 @@
       <el-menu-item index="/home/findMusic/songList">歌单</el-menu-item>
       <el-menu-item index="/home/findMusic/playList">排行榜</el-menu-item>
       <el-menu-item index="/home/findMusic/singerList">歌手</el-menu-item>
+      <el-menu-item index="/home/findMusic/musicStoryboard">音乐故事板</el-menu-item>
     </el-menu>
   </div>
 </template>

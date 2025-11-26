@@ -38,11 +38,17 @@ const router = new VueRouter({
                         component: () =>
                             import('@/pages/findMusic/playList/playList')
                     },
-                    {
-                        path: '/home/findMusic/singerList',
-                        name: 'singerList',
-                        component: () =>
-                            import('@/pages/findMusic/singerList/singerList')
+                    { 
+                        path: '/home/findMusic/singerList', 
+                        name: 'singerList', 
+                        component: () => 
+                            import('@/pages/findMusic/singerList/singerList') 
+                    },
+                    { 
+                        path: '/home/findMusic/musicStoryboard', 
+                        name: 'musicStoryboard', 
+                        component: () => 
+                            import('@/pages/findMusic/musicStoryboard/musicStoryboard') 
                     }
                 ]
             },
