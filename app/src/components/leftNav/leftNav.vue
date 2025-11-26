@@ -30,6 +30,12 @@
             <span>{{ item.name }}</span>
           </el-menu-item>
         </div>
+        <p class="leftNavFont">音乐时光机</p>
+        <div>
+          <el-menu-item index="/home/music-time-machine">
+            <span>音乐时光机</span>
+          </el-menu-item>
+        </div>
       </el-menu>
     </el-col>
   </div>
