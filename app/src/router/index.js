@@ -96,6 +96,13 @@ const router = new VueRouter({
                 component:()=>
                     import('@/pages/artistPage/artistPage')
             },
+            // 歌单分类推荐管理
+            { 
+                path: '/home/playlist-recommend',
+                name: 'playlistRecommend',
+                component: () => 
+                    import('@/pages/playlistRecommend/playlistRecommend'),
+            },
             // 歌曲详情界面
             {
                 path:'/home/songPage',
