@@ -102,6 +102,12 @@ const router = new VueRouter({
                 component:()=>
                     import('@/pages/songPage/songPage')
             },
+            // 播客直播管理
+            {
+                path:'/home/podcast-live-admin',
+                component:()=>
+                    import('@/pages/podcastLiveAdmin/podcastLiveAdmin')
+            },
             // 私人FM
             {
                 path:'/home/myFM',
