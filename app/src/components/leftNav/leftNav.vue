@@ -30,6 +30,12 @@
             <span>{{ item.name }}</span>
           </el-menu-item>
         </div>
+        <p class="leftNavFont">音乐人中心</p>
+        <div>
+          <el-menu-item index="/home/musician-dashboard">
+            <span>数据中心</span>
+          </el-menu-item>
+        </div>
       </el-menu>
     </el-col>
   </div>
