@@ -81,6 +81,7 @@
 
         <musicPlay ref="musicPlay" @isShowSongList="isShowSongList"></musicPlay>
         <musicTable v-show="showSongList" @getNextSong="getNextSong" @cleanDur="cleanDur"></musicTable>
+        <bottomNav></bottomNav>
     </div>
 </template>
 
@@ -88,10 +89,11 @@
 import leftNav from '@/components/leftNav/leftNav'
 import musicPlay from '@/components/musicPlay/musicPlay'
 import musicTable from '@/components/musicPlay/musicTable'
+import bottomNav from '@/components/bottomNav/bottomNav'
 import { mapState } from 'vuex'
 export default {
     name: 'home',
-    components: { leftNav, musicPlay, musicTable },
+    components: { leftNav, musicPlay, musicTable, bottomNav },
     data() {
         return {
             input: '',
