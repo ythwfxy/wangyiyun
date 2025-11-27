@@ -96,6 +96,13 @@ const router = new VueRouter({
                 component:()=>
                     import('@/pages/artistPage/artistPage')
             },
+            // 场景匹配界面
+            {
+                path: '/home/scene-match',
+                name: 'sceneMatch',
+                component: () =>
+                    import('@/pages/sceneMatch/sceneMatch')
+            },
             // 歌曲详情界面
             {
                 path:'/home/songPage',
