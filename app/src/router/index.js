@@ -96,6 +96,13 @@ const router = new VueRouter({
                 component:()=>
                     import('@/pages/artistPage/artistPage')
             },
+            // 音乐时光机界面
+            {
+                path: '/home/time-machine',
+                name: 'timeMachine',
+                component: () =>
+                    import('@/pages/musicTimeMachine/musicTimeMachine')
+            },
             // 歌曲详情界面
             {
                 path:'/home/songPage',
