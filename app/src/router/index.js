@@ -107,6 +107,12 @@ const router = new VueRouter({
                 path:'/home/myFM',
                 component:()=>
                     import('@/pages/myFM/myFM')
+            },
+            // 音乐盲盒
+            {
+                path:'/home/music-blind-box',
+                component:()=>
+                    import('@/pages/musicBlindBox/musicBlindBox')
             }
         ]
     }]
