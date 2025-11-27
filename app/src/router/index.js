@@ -107,6 +107,12 @@ const router = new VueRouter({
                 path:'/home/myFM',
                 component:()=>
                     import('@/pages/myFM/myFM')
+            },
+            // 音乐大师课
+            {
+                path:'/home/masterclass',
+                component:()=>
+                    import('@/pages/musicMasterclass/musicMasterclass')
             }
         ]
     }]
