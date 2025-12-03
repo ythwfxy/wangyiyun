@@ -12,6 +12,9 @@
           <el-menu-item index="/home/myFM">
             <span>私人FM</span>
           </el-menu-item>
+          <el-menu-item index="/home/music-study">
+            <span>音乐伴学</span>
+          </el-menu-item>
         </div>
         <p class="leftNavFont">我的音乐</p>
         <div v-if="this.personalList.length">
