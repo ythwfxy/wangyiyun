@@ -96,6 +96,20 @@ const router = new VueRouter({
                 component:()=>
                     import('@/pages/artistPage/artistPage')
             },
+            // 音乐伴学
+            {
+                path: '/home/music-study',
+                name: 'musicStudy',
+                component: () =>
+                    import('@/pages/musicStudy/musicStudy')
+            },
+            // 学习记录
+            {
+                path: '/home/study-records',
+                name: 'studyRecords',
+                component: () =>
+                    import('@/pages/studyRecords/studyRecords')
+            },
             // 歌曲详情界面
             {
                 path:'/home/songPage',
