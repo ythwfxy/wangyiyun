@@ -18,10 +18,20 @@
           <el-menu-item :index='"/home/songList/" + personalList[0].id'>
             <span>我喜欢的音乐</span>
           </el-menu-item>
+          <!-- 歌词海报 -->
+          <el-menu-item index="/home/lyric-poster">
+            <i class="el-icon-picture"></i>
+            <span>歌词海报</span>
+          </el-menu-item>
         </div>
         <div v-else>
           <el-menu-item>
             <span>请先登录后查看</span>
+          </el-menu-item>
+          <!-- 歌词海报 -->
+          <el-menu-item index="/home/lyric-poster">
+            <i class="el-icon-picture"></i>
+            <span>歌词海报</span>
           </el-menu-item>
         </div>
         <p class="leftNavFont">创建的歌单</p>
