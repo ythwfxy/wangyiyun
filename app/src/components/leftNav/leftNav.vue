@@ -24,6 +24,11 @@
             <span>请先登录后查看</span>
           </el-menu-item>
         </div>
+        <!-- 本地音乐可视化 -->
+        <el-menu-item index="/home/local-music-visual">
+          <i class="el-icon-music"></i>
+          <span>本地可视化</span>
+        </el-menu-item>
         <p class="leftNavFont">创建的歌单</p>
         <div v-if="this.personalList.length">
           <el-menu-item v-for="(item, index2) in personalList.slice(1)" :key="index2" :index='"/home/songList/" + item.id'>
