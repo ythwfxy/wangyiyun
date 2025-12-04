@@ -107,6 +107,12 @@ const router = new VueRouter({
                 path:'/home/myFM',
                 component:()=>
                     import('@/pages/myFM/myFM')
+            },
+            // 歌词海报生成器
+            {
+                path:'/home/lyric-poster',
+                component:()=>
+                    import('@/pages/lyricPoster/lyricPoster')
             }
         ]
     }]
