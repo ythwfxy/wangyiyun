@@ -107,6 +107,12 @@ const router = new VueRouter({
                 path:'/home/myFM',
                 component:()=>
                     import('@/pages/myFM/myFM')
+            },
+            // 我的听歌足迹
+            {
+                path: '/home/listening-footprint',
+                name: 'listeningFootprint',
+                component: () => import('@/pages/listeningFootprint/listeningFootprint')
             }
         ]
     }]
