@@ -96,6 +96,12 @@ const router = new VueRouter({
                 component:()=>
                     import('@/pages/artistPage/artistPage')
             },
+            // 音乐备忘录
+            { 
+                path: '/home/music-memo',
+                name: 'musicMemo',
+                component: () => import('@/pages/musicMemo/musicMemo')
+            },
             // 歌曲详情界面
             {
                 path:'/home/songPage',
@@ -107,6 +113,12 @@ const router = new VueRouter({
                 path:'/home/myFM',
                 component:()=>
                     import('@/pages/myFM/myFM')
+            },
+            // 歌词海报
+            {
+                path:'/home/lyric-poster',
+                component:()=>
+                    import('@/pages/lyricPoster/lyricPoster')
             }
         ]
     }]
