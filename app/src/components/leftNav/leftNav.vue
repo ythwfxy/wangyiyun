@@ -21,6 +21,9 @@
           <el-menu-item index="/home/lyric-poster">
             <span>歌词海报</span>
           </el-menu-item>
+          <el-menu-item index="/home/music-memo">
+            <span>音乐备忘录</span>
+          </el-menu-item>
         </div>
         <div v-else>
           <el-menu-item>
