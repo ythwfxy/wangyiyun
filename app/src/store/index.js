@@ -39,6 +39,17 @@ const state = {
     nowDuration: 0,
     // 用户歌单
     personalList: sessionStorage.getItem('personalList') ? JSON.parse(sessionStorage.getItem('personalList')) : [],
+    // 听歌足迹
+    listeningFootprints: localStorage.getItem('listeningFootprints') ? JSON.parse(localStorage.getItem('listeningFootprints')) : [
+      { id: 1, name: '晴天', artist: '周杰伦', album: '叶惠美', playTime: new Date(Date.now() - 3600000).toISOString(), duration: 260 },
+      { id: 2, name: '七里香', artist: '周杰伦', album: '七里香', playTime: new Date(Date.now() - 7200000).toISOString(), duration: 274 },
+      { id: 3, name: '青花瓷', artist: '周杰伦', album: '我很忙', playTime: new Date(Date.now() - 10800000).toISOString(), duration: 250 },
+      { id: 4, name: '以父之名', artist: '周杰伦', album: '叶惠美', playTime: new Date(Date.now() - 86400000).toISOString(), duration: 322 },
+      { id: 5, name: '夜曲', artist: '周杰伦', album: '十一月的萧邦', playTime: new Date(Date.now() - 172800000).toISOString(), duration: 237 },
+      { id: 6, name: '双截棍', artist: '周杰伦', album: '范特西', playTime: new Date(Date.now() - 259200000).toISOString(), duration: 240 },
+      { id: 7, name: '简单爱', artist: '周杰伦', album: '范特西', playTime: new Date(Date.now() - 345600000).toISOString(), duration: 233 },
+      { id: 8, name: '爱在西元前', artist: '周杰伦', album: '范特西', playTime: new Date(Date.now() - 432000000).toISOString(), duration: 219 }
+    ],
 }
 const mutations = {
     // 保存当前搜索信息
@@ -199,6 +210,44 @@ const mutations = {
     savePersonalList(state,personalList){
         state.personalList=personalList
     },
+    // 添加听歌记录
+    addListeningFootprint(state, song) {
+        const today = new Date().toLocaleDateString('zh-CN')
+        const now = new Date().toLocaleTimeString('zh-CN', { hour12: false })
+        
+        // 检查是否已经有该歌曲的记录
+        const existingIndex = state.listeningFootprints.findIndex(item => item.id === song.id)
+        
+        if (existingIndex !== -1) {
+            // 更新现有记录
+            const existingItem = state.listeningFootprints[existingIndex]
+            existingItem.playCount += 1
+            existingItem.playTime = now
+            existingItem.playDate = today
+        } else {
+            // 添加新记录
+            const newFootprint = {
+                ...song,
+                playDate: today,
+                playTime: now,
+                playCount: 1
+            }
+            state.listeningFootprints.unshift(newFootprint)
+        }
+        
+        // 保存到 localStorage
+        localStorage.setItem('listeningFootprints', JSON.stringify(state.listeningFootprints))
+    },
+    // 删除单条听歌记录
+    deleteFootprint(state, songId) {
+        state.listeningFootprints = state.listeningFootprints.filter(item => item.id !== songId)
+        localStorage.setItem('listeningFootprints', JSON.stringify(state.listeningFootprints))
+    },
+    // 清空所有听歌记录
+    clearAllFootprints(state) {
+        state.listeningFootprints = []
+        localStorage.setItem('listeningFootprints', JSON.stringify(state.listeningFootprints))
+    }
 }
 const actions = {
     // 保存当前搜索信息

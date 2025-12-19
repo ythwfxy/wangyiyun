@@ -403,6 +403,8 @@ export default {
             // 放入已经播放过的歌单
             this.$store.dispatch("deleteHasListSong", musicDetail.id);
             this.$store.dispatch("pushHasPlayList", musicDetail);
+            // 记录听歌足迹
+            this.$store.commit("addListeningFootprint", musicDetail);
         },
         //根据id获取音乐url
         async getMusicUrl(musicId) {
