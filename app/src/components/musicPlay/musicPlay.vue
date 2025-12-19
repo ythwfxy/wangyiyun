@@ -403,6 +403,39 @@ export default {
             // 放入已经播放过的歌单
             this.$store.dispatch("deleteHasListSong", musicDetail.id);
             this.$store.dispatch("pushHasPlayList", musicDetail);
+            // 记录听歌足迹到localStorage
+            this.recordListeningFootprint(musicDetail);
+        },
+        // 记录听歌足迹
+        recordListeningFootprint(musicDetail) {
+            const footprints = JSON.parse(localStorage.getItem('listeningFootprints') || '[]');
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('zh-CN');
+            const timeStr = now.toLocaleTimeString('zh-CN');
+            
+            // 查找是否已有相同歌曲的记录
+            const existingIndex = footprints.findIndex(item => item.id === musicDetail.id);
+            
+            if (existingIndex !== -1) {
+                // 更新现有记录
+                const existingItem = footprints[existingIndex];
+                existingItem.count += 1;
+                existingItem.playTime = timeStr;
+                existingItem.date = dateStr;
+            } else {
+                // 添加新记录
+                const newItem = {
+                    id: musicDetail.id,
+                    name: musicDetail.name,
+                    artist: musicDetail.ar ? musicDetail.ar.map(ar => ar.name).join('/') : '未知艺术家',
+                    date: dateStr,
+                    playTime: timeStr,
+                    count: 1
+                };
+                footprints.push(newItem);
+            }
+            
+            localStorage.setItem('listeningFootprints', JSON.stringify(footprints));
         },
         //根据id获取音乐url
         async getMusicUrl(musicId) {
