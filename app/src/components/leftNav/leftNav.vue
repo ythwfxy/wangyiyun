@@ -24,6 +24,9 @@
             <span>请先登录后查看</span>
           </el-menu-item>
         </div>
+        <el-menu-item index="/home/listening-footprint">
+          <span>听歌足迹</span>
+        </el-menu-item>
         <p class="leftNavFont">创建的歌单</p>
         <div v-if="this.personalList.length">
           <el-menu-item v-for="(item, index2) in personalList.slice(1)" :key="index2" :index='"/home/songList/" + item.id'>
