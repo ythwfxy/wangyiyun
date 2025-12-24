@@ -107,6 +107,12 @@ const router = new VueRouter({
                 path:'/home/myFM',
                 component:()=>
                     import('@/pages/myFM/myFM')
+            },
+            // 自定义快捷播放
+            {
+                path:'/home/custom-shortcut',
+                component:()=>
+                    import('@/pages/customShortcut/customShortcut')
             }
         ]
     }]
