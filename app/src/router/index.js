@@ -102,6 +102,12 @@ const router = new VueRouter({
                 component:()=>
                     import('@/pages/songPage/songPage')
             },
+            // FTP文件管理
+            {
+                path:'/home/ftp',
+                component:()=>
+                    import('@/pages/ftp/ftp')
+            },
             // 私人FM
             {
                 path:'/home/myFM',
