@@ -14,6 +14,9 @@
           </el-menu-item>
         </div>
         <p class="leftNavFont">我的音乐</p>
+        <el-menu-item index="/home/music-alarm">
+          <span>音乐闹钟</span>
+        </el-menu-item>
         <div v-if="this.personalList.length">
           <el-menu-item :index='"/home/songList/" + personalList[0].id'>
             <span>我喜欢的音乐</span>
