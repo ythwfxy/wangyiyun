@@ -30,6 +30,10 @@
             <span>{{ item.name }}</span>
           </el-menu-item>
         </div>
+        <p class="leftNavFont">歌单管理</p>
+        <el-menu-item index="/home/playlist-tag">
+          <span>标签管理</span>
+        </el-menu-item>
       </el-menu>
     </el-col>
   </div>
