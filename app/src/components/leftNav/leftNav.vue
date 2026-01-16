@@ -19,7 +19,10 @@
             <span>我喜欢的音乐</span>
           </el-menu-item>
         </div>
-        <div v-else>
+        <el-menu-item index="/home/playlist-tag">
+          <span>歌单标签管理</span>
+        </el-menu-item>
+        <div v-if="!this.personalList.length">
           <el-menu-item>
             <span>请先登录后查看</span>
           </el-menu-item>
