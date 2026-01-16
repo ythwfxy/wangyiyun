@@ -37,6 +37,7 @@ const state = {
     playOrd: sessionStorage.getItem('playOrd') ? JSON.parse(sessionStorage.getItem('playOrd')) : 0,
     //歌曲当前进度
     nowDuration: 0,
+
     // 用户歌单
     personalList: sessionStorage.getItem('personalList') ? JSON.parse(sessionStorage.getItem('personalList')) : [],
 }
