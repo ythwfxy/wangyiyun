@@ -60,21 +60,59 @@
     methods: {
       // 获取歌单详情数据
       async getPlayListDetail() {
-        await this.$http
-          .get("playlist/detail", {
-            params: {
-              id: this.currentId,
-            },
-          })
-          .then((res) => {
-            console.log(res.data);
-            this.playList = res.data.playlist;
-            this.playList.trackIds.forEach((item) => {
-              this.queryIds += item.id + ",";
+        try {
+          await this.$http
+            .get("playlist/detail", {
+              params: {
+                id: this.currentId,
+              },
+            })
+            .then((res) => {
+              console.log(res.data);
+              this.playList = res.data.playlist;
+              this.playList.trackIds.forEach((item) => {
+                this.queryIds += item.id + ",";
+              });
             });
-          });
-        this.getSongDetail();
-        this.getCommentPage(0);
+          this.getSongDetail();
+          this.getCommentPage(0);
+        } catch (error) {
+          console.log("API调用失败，可能是MOCK数据ID");
+          this.handleMockPlaylist();
+        }
+      },
+      handleMockPlaylist() {
+        const mockPlaylists = require('@/utils/mockData').mockPlaylists;
+        let mockPlaylist = mockPlaylists.find(p => p.id == this.currentId);
+        
+        if (!mockPlaylist) {
+          const sessionData = sessionStorage.getItem('currentPlaylistData');
+          if (sessionData) {
+            const playlistData = JSON.parse(sessionData);
+            if (playlistData.id == this.currentId) {
+              mockPlaylist = playlistData;
+            }
+          }
+        }
+        
+        if (mockPlaylist) {
+          this.playList = {
+            id: mockPlaylist.id,
+            name: mockPlaylist.name,
+            coverImgUrl: mockPlaylist.coverImgUrl,
+            description: `这是${mockPlaylist.name}的描述，包含${mockPlaylist.tags.join('、')}风格的音乐。`,
+            creator: {
+              nickname: mockPlaylist.creator.nickname,
+              avatarUrl: 'https://picsum.photos/seed/avatar/100/100.jpg'
+            },
+            playCount: mockPlaylist.playCount,
+            tags: mockPlaylist.tags,
+            trackIds: Array.from({ length: 20 }, (_, i) => ({ id: 1000000000 + i }))
+          };
+          this.queryIds = this.playList.trackIds.map(item => item.id).join(',');
+          this.getSongDetail();
+          this.getCommentPage(0);
+        }
       },
       // 获取歌曲数据
       getSongDetail() {
