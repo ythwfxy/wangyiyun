@@ -24,6 +24,10 @@
             <span>请先登录后查看</span>
           </el-menu-item>
         </div>
+        <p class="leftNavFont">我的打卡</p>
+        <el-menu-item index="/home/listening-checkin">
+          <span>听歌打卡日记</span>
+        </el-menu-item>
         <p class="leftNavFont">创建的歌单</p>
         <div v-if="this.personalList.length">
           <el-menu-item v-for="(item, index2) in personalList.slice(1)" :key="index2" :index='"/home/songList/" + item.id'>
