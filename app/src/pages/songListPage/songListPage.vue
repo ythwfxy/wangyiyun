@@ -24,6 +24,7 @@
   import menuTab from "@/components/songListPage/menuTab";
   import musicList from "@/components/songListPage/musicList";
   import comment from "@/components/songListPage/comment";
+  import { getPlaylistDetail, getSongDetails, getPlaylistComments } from "@/utils/playlistService";
   export default {
     name: "songListPage",
     components: {
@@ -60,53 +61,31 @@
     methods: {
       // 获取歌单详情数据
       async getPlayListDetail() {
-        await this.$http
-          .get("playlist/detail", {
-            params: {
-              id: this.currentId,
-            },
-          })
-          .then((res) => {
-            console.log(res.data);
-            this.playList = res.data.playlist;
-            this.playList.trackIds.forEach((item) => {
-              this.queryIds += item.id + ",";
-            });
-          });
+        const result = await getPlaylistDetail(this.currentId);
+        console.log(result);
+        this.playList = result.playlist;
+        this.playList.trackIds.forEach((item) => {
+          this.queryIds += item.id + ",";
+        });
         this.getSongDetail();
         this.getCommentPage(0);
       },
       // 获取歌曲数据
       getSongDetail() {
-        this.$http
-          .get("song/detail", {
-            params: {
-              ids: this.queryIds.substr(0, this.queryIds.length - 1),
-            },
-          })
-          .then((res) => {
-            console.log(res.data);
-            this.songsDetail = res.data;
-          });
+        const ids = this.queryIds.substr(0, this.queryIds.length - 1);
+        const result = getSongDetails(ids);
+        console.log(result);
+        this.songsDetail = result;
       },
       // 获取评论数据
       getCommentPage(page) {
-        this.$http
-          .get("comment/playlist", {
-            params: {
-              id: this.currentId,
-              limit: 20,
-              offset: page * 20,
-            },
-          })
-          .then((res) => {
-            if (page == 0) {
-              this.comment = res.data;
-            } else {
-              this.comment.comments = res.data.comments;
-            }
-            console.log(res.data);
-          });
+        const result = getPlaylistComments(this.currentId, 20, page * 20);
+        console.log(result);
+        if (page == 0) {
+          this.comment = result;
+        } else {
+          this.comment.comments = result.comments;
+        }
       },
       // 改变导航栏
       changeActive(index) {
