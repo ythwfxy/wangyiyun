@@ -60,21 +60,47 @@
     methods: {
       // 获取歌单详情数据
       async getPlayListDetail() {
-        await this.$http
-          .get("playlist/detail", {
-            params: {
-              id: this.currentId,
-            },
-          })
-          .then((res) => {
-            console.log(res.data);
-            this.playList = res.data.playlist;
-            this.playList.trackIds.forEach((item) => {
-              this.queryIds += item.id + ",";
+        // 如果是路由1，使用localStorage中的模拟数据
+        if (this.currentId === '1') {
+          // 从localStorage获取模拟歌曲数据
+          const mockSongs = JSON.parse(localStorage.getItem('mockSongs'));
+          
+          // 设置模拟的playList数据
+          this.playList = {
+            id: 1,
+            name: '模拟歌单',
+            coverImgUrl: '',
+            description: '这是一个使用模拟数据的歌单',
+            trackIds: mockSongs.songs.map(song => ({ id: song.id })),
+            tracks: mockSongs.songs
+          };
+          
+          // 构建queryIds
+          this.queryIds = mockSongs.songs.map(song => song.id).join(',');
+          
+          // 直接设置songsDetail数据
+          this.songsDetail = mockSongs;
+          
+          // 获取评论数据（可以使用真实API或模拟数据）
+          this.getCommentPage(0);
+        } else {
+          // 其他路由使用真实API
+          await this.$http
+            .get("playlist/detail", {
+              params: {
+                id: this.currentId,
+              },
+            })
+            .then((res) => {
+              console.log(res.data);
+              this.playList = res.data.playlist;
+              this.playList.trackIds.forEach((item) => {
+                this.queryIds += item.id + ",";
+              });
             });
-          });
-        this.getSongDetail();
-        this.getCommentPage(0);
+          this.getSongDetail();
+          this.getCommentPage(0);
+        }
       },
       // 获取歌曲数据
       getSongDetail() {

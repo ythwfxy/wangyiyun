@@ -1,13 +1,27 @@
 <template>
   <div class="musicList">
-    <div id="songSearchHead">
-      <span style="position: absolute; left: 15%; color: #888888; font-size: 15px">音乐标题</span>
-      <span style="position: absolute; left: 45%; color: #888888; font-size: 15px">歌手</span>
-      <span style="position: absolute; left: 65%; color: #888888; font-size: 15px">
-        专辑
-      </span>
-      <span style="position: absolute; left: 85%; color: #888888; font-size: 15px">时长</span>
+    <!-- 行筛选样式的标题行 -->
+    <div class="songRowHeader">
+      <!-- 选择列 -->
+      <div class="headerSelect"></div>
+      <!-- 歌曲名列 -->
+      <div class="headerTitle">
+        <h3 style="margin: 0; font-size: 15px; font-weight: normal; color: #888888;">音乐标题</h3>
+      </div>
+      <!-- 歌手列 -->
+      <div class="headerArtist">
+        <h3 style="margin: 0; font-size: 15px; font-weight: normal; color: #888888;">歌手</h3>
+      </div>
+      <!-- 专辑列 -->
+      <div class="headerAlbum">
+        <h3 style="margin: 0; font-size: 15px; font-weight: normal; color: #888888;">专辑</h3>
+      </div>
+      <!-- 时长列 -->
+      <div class="headerDuration">
+        <h3 style="margin: 0; font-size: 15px; font-weight: normal; color: #888888;">时长</h3>
+      </div>
     </div>
+    
     <div :class="{ songMesSin: index % 2 !== 0, songMesDou: index % 2 === 0 }" v-for="(item, index) in songsDetail.songs"
       :key="index" background="#f9f9f9" @dblclick="startSong(item, index)" @mouseenter="currentIndex = index"
       @mouseleave="currentIndex = -1">
@@ -19,18 +33,18 @@
           v-show="songsDetail.privileges[index].chargeInfoList[0].chargeType !== 0"></i>
       </div>
       <!-- 播放或暂停音乐动画表情 -->
-      <div style="font-size: 10px; position: absolute; top: 20px; left: 28px; color: #ec4141"
+      <div style="font-size: 10px; position: absolute; top: 20px; left: 45px; color: #ec4141"
         v-if="item.id === songId && isPlaying">
         <playAni />
       </div>
-      <i class="iconfont icon-zanting" style="font-size: 10px; position: absolute; top: 2px; left: 28px; color: #ec4141"
+      <i class="iconfont icon-zanting" style="font-size: 10px; position: absolute; top: 2px; left: 45px; color: #ec4141"
         v-else-if="item.id === songId && !isPlaying"></i>
       <!-- 歌曲序号 -->
       <span style="
               font-size: 15px !important;
               position: absolute;
               top: 2px;
-              left: 25px;
+              left: 42px;
               color: #373737;
             " v-else>{{ index >= 9 ? index + 1 : "0" + (index + 1) }}</span>
       <!-- 歌曲名 -->
@@ -66,21 +80,11 @@
         </div>
       </div>
       <!-- 专辑 -->
-      <div style="
-              width: 15%;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              overflow: hidden;
-              word-break: break-all;
-              position: absolute;
-              left: 65%;
-              cursor: pointer;
-              font-weight: 300;
-            " @click="toAlbumPage(item.al.id)">
+      <div class="albumName" @click="toAlbumPage(item.al.id)">
         {{ item.al.name }}
       </div>
       <!-- 时长 -->
-      <span style="position: absolute; left: 85%">{{
+      <span class="duration">{{
         Math.floor(item.dt / 1000) | timeFormat
       }}</span>
     </div>
@@ -121,28 +125,66 @@ export default {
     };
   },
   methods: {
+    // 生成模拟歌曲数据
+    generateMockSongs() {
+      // 检查localStorage中是否已有数据
+      if (!localStorage.getItem('mockSongs')) {
+        const mockSongs = {
+          songs: [],
+          privileges: []
+        };
+        
+        // 生成50条模拟数据
+        for (let i = 1; i <= 50; i++) {
+          const song = {
+            id: i,
+            name: `模拟歌曲${i}`,
+            alia: [`别名${i}`],
+            ar: [{ id: i * 100, name: `模拟歌手${i}` }],
+            al: { id: i * 1000, name: `模拟专辑${i}` },
+            dt: Math.floor(Math.random() * 600000) + 120000, // 2-10分钟
+            mv: Math.random() > 0.7 ? i * 10000 : 0
+          };
+          
+          const privilege = {
+            id: i,
+            chargeInfoList: [{ chargeType: Math.random() > 0.8 ? 1 : 0 }],
+            st: Math.random() > 0.9 ? -200 : 0
+          };
+          
+          mockSongs.songs.push(song);
+          mockSongs.privileges.push(privilege);
+        }
+        
+        // 存储到localStorage
+        localStorage.setItem('mockSongs', JSON.stringify(mockSongs));
+      }
+    },
     // 添加到喜欢列表
     addLove(song) {
-      this.$http({
-        url: '/like',
-        methods: 'post',
-        params: {
-          id: song.id
-        },
-        data: {
-          cookie: localStorage.getItem('cookie')
-        }
-      }).then(res => {
-        
-        if(res.data.code==200){
-          alert("成功添加到喜欢列表")
-        }else if(res.data.code==302){
-          alert("请先登录")
-        }else{
-          alert("添加失败")
-        }
+      // 二次确认
+      if (confirm(`确定要将歌曲《${song.name}》添加到喜欢列表吗？`)) {
+        this.$http({
+          url: '/like',
+          methods: 'post',
+          params: {
+            id: song.id
+          },
+          data: {
+            cookie: localStorage.getItem('cookie')
+          }
+        }).then(res => {
+          
+          if(res.data.code==200){
+            alert("成功添加到喜欢列表")
+          }else if(res.data.code==302){
+            alert("请先登录")
+          }else{
+            alert("添加失败")
+          }
 
-      })
+        })
+      }
     },
     // 双击切换到当前播放
     startSong(musicDetail, index) {
@@ -264,9 +306,11 @@ export default {
     //点击歌手跳转界面
     toArtistPage(id) {
       this.$router.push("/home/artistPage/" + id);
-    },
+    }
   },
   created() {
+    // 生成模拟歌曲数据
+    this.generateMockSongs();
     this.getSongPage(0, "Song");
   },
 };
@@ -294,6 +338,8 @@ export default {
   color: #363636;
   opacity: 0.8;
   text-align: left;
+  border: none;
+  box-shadow: none;
 }
 
 .songMesDou {
@@ -305,19 +351,23 @@ export default {
   opacity: 0.8;
   background: #f9f9f9;
   text-align: left;
+  border: none;
+  box-shadow: none;
 }
 
 .songMesSin:hover,
 .songMesDou:hover {
   background: #f4f4f4;
+  border: none;
+  box-shadow: none;
 }
 
 /* 判断是否正在播放 */
 
 .pauseSongName {
   position: absolute;
-  width: 20%;
-  left: 15%;
+  width: 25%;
+  left: 10%;
   opacity: 0.9;
   /* 超出省略号 */
   white-space: nowrap;
@@ -329,8 +379,8 @@ export default {
 
 .startSongName {
   position: absolute;
-  width: 20%;
-  left: 15%;
+  width: 25%;
+  left: 10%;
   opacity: 0.9;
   /* 超出省略号 */
   white-space: nowrap;
@@ -342,8 +392,8 @@ export default {
 
 .noSongName {
   position: absolute;
-  width: 20%;
-  left: 15%;
+  width: 25%;
+  left: 10%;
   opacity: 0.9;
   /* 超出省略号 */
   white-space: nowrap;
@@ -355,19 +405,112 @@ export default {
 
 .startSongAurtor {
   color: #507daf;
+  width: 15%;
+  left: 38%;
 }
 
 /* 歌曲操作 */
 
 .songFunc {
   position: absolute;
-  left: 37%;
+  left: 30%;
+}
+
+/* 专辑 */
+.albumName {
+  position: absolute;
+  width: 20%;
+  left: 55%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+  cursor: pointer;
+  font-weight: 300;
+}
+
+/* 时长 */
+.duration {
+  position: absolute;
+  left: 80%;
+}
+
+/* 行筛选标题行样式 */
+.songRowHeader {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 5px;
+}
+
+.headerSelect {
+  width: 5%;
+  padding: 0 10px;
+}
+
+.headerTitle {
+  width: 35%;
+  padding: 0 10px;
+}
+
+.headerArtist {
+  width: 20%;
+  padding: 0 10px;
+}
+
+.headerAlbum {
+  width: 25%;
+  padding: 0 10px;
+}
+
+.headerDuration {
+  width: 15%;
+  padding: 0 10px;
+}
+
+/* 调整歌曲列表行的列宽 */
+.pauseSongName, .startSongName, .noSongName {
+  position: absolute;
+  width: 30%;
+  left: 8%;
+  opacity: 0.9;
+  /* 超出省略号 */
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+}
+
+.startSongAurtor {
+  color: #507daf;
+  width: 20%;
+  left: 38%;
+}
+
+.albumName {
+  position: absolute;
+  width: 25%;
+  left: 58%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+  cursor: pointer;
+  font-weight: 300;
+}
+
+.duration {
+  position: absolute;
+  left: 83%;
 }
 
 /* 歌曲权限 */
 .songRoot {
   position: absolute;
-  right: 86%;
+  left: 20px;
 }
 </style>
   
