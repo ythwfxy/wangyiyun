@@ -1,12 +1,12 @@
 <template>
   <div class="musicList">
     <div id="songSearchHead">
-      <span style="position: absolute; left: 15%; color: #888888; font-size: 15px">音乐标题</span>
-      <span style="position: absolute; left: 45%; color: #888888; font-size: 15px">歌手</span>
-      <span style="position: absolute; left: 65%; color: #888888; font-size: 15px">
+      <h3 style="position: absolute; left: 15%; color: #888888; font-size: 15px; margin: 0; font-weight: normal;">音乐标题</h3>
+      <h3 style="position: absolute; left: 45%; color: #888888; font-size: 15px; margin: 0; font-weight: normal;">歌手</h3>
+      <h3 style="position: absolute; left: 65%; color: #888888; font-size: 15px; margin: 0; font-weight: normal;">
         专辑
-      </span>
-      <span style="position: absolute; left: 85%; color: #888888; font-size: 15px">时长</span>
+      </h3>
+      <h3 style="position: absolute; left: 85%; color: #888888; font-size: 15px; margin: 0; font-weight: normal;">时长</h3>
     </div>
     <div :class="{ songMesSin: index % 2 !== 0, songMesDou: index % 2 === 0 }" v-for="(item, index) in songsDetail.songs"
       :key="index" background="#f9f9f9" @dblclick="startSong(item, index)" @mouseenter="currentIndex = index"
@@ -80,7 +80,7 @@
         {{ item.al.name }}
       </div>
       <!-- 时长 -->
-      <span style="position: absolute; left: 85%">{{
+      <span style="position: absolute; right: 15%;">{{
         Math.floor(item.dt / 1000) | timeFormat
       }}</span>
     </div>
@@ -123,26 +123,29 @@ export default {
   methods: {
     // 添加到喜欢列表
     addLove(song) {
-      this.$http({
-        url: '/like',
-        methods: 'post',
-        params: {
-          id: song.id
-        },
-        data: {
-          cookie: localStorage.getItem('cookie')
-        }
-      }).then(res => {
-        
-        if(res.data.code==200){
-          alert("成功添加到喜欢列表")
-        }else if(res.data.code==302){
-          alert("请先登录")
-        }else{
-          alert("添加失败")
-        }
+      // 二次确认
+      if (confirm(`确定要将歌曲 "${song.name}" 添加到喜欢列表吗？`)) {
+        this.$http({
+          url: '/like',
+          methods: 'post',
+          params: {
+            id: song.id
+          },
+          data: {
+            cookie: localStorage.getItem('cookie')
+          }
+        }).then(res => {
+          
+          if(res.data.code==200){
+            alert("成功添加到喜欢列表")
+          }else if(res.data.code==302){
+            alert("请先登录")
+          }else{
+            alert("添加失败")
+          }
 
-      })
+        })
+      }
     },
     // 双击切换到当前播放
     startSong(musicDetail, index) {
@@ -265,9 +268,58 @@ export default {
     toArtistPage(id) {
       this.$router.push("/home/artistPage/" + id);
     },
+    // 生成模拟歌曲数据
+    generateMockData() {
+      // 检查localStorage中是否已有数据
+      if (!localStorage.getItem('mockSongsData')) {
+        const mockSongs = [];
+        const songNames = ['歌曲1', '歌曲2', '歌曲3', '歌曲4', '歌曲5', '歌曲6', '歌曲7', '歌曲8', '歌曲9', '歌曲10'];
+        const artistNames = ['歌手A', '歌手B', '歌手C', '歌手D', '歌手E'];
+        const albumNames = ['专辑1', '专辑2', '专辑3', '专辑4', '专辑5'];
+        
+        // 生成50条模拟歌曲数据
+        for (let i = 1; i <= 50; i++) {
+          const song = {
+            id: 10000000 + i,
+            name: `${songNames[Math.floor(Math.random() * songNames.length)]}${i}`,
+            ar: [
+              {
+                id: 10000 + Math.floor(Math.random() * 5),
+                name: artistNames[Math.floor(Math.random() * artistNames.length)]
+              }
+            ],
+            al: {
+              id: 20000 + Math.floor(Math.random() * 5),
+              name: albumNames[Math.floor(Math.random() * albumNames.length)]
+            },
+            dt: 180000 + Math.floor(Math.random() * 180000), // 3-6分钟
+            mv: Math.random() > 0.5 ? 1000 + i : 0,
+            privileges: [
+              {
+                chargeInfoList: [
+                  {
+                    chargeType: Math.random() > 0.5 ? 0 : 1
+                  }
+                ],
+                st: 0
+              }
+            ]
+          };
+          mockSongs.push(song);
+        }
+        
+        // 存储到localStorage
+        localStorage.setItem('mockSongsData', JSON.stringify(mockSongs));
+        console.log('模拟歌曲数据已生成并存储到localStorage');
+      } else {
+        console.log('localStorage中已有模拟歌曲数据');
+      }
+    },
   },
   created() {
     this.getSongPage(0, "Song");
+    // 生成并存储模拟歌曲数据到localStorage
+    this.generateMockData();
   },
 };
 </script>
@@ -282,6 +334,13 @@ export default {
   line-height: 50px;
   color: #363636;
   opacity: 0.8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 5%;
+  box-sizing: border-box;
+  background: #fafafa;
+  border-bottom: 2px solid #f0f0f0;
 }
 
 /* 每行歌曲样式 */
@@ -294,6 +353,7 @@ export default {
   color: #363636;
   opacity: 0.8;
   text-align: left;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .songMesDou {
@@ -303,20 +363,21 @@ export default {
   line-height: 50px;
   color: #363636;
   opacity: 0.8;
-  background: #f9f9f9;
+  background: #ffffff;
   text-align: left;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .songMesSin:hover,
 .songMesDou:hover {
-  background: #f4f4f4;
+  background: #f8f8f8;
 }
 
 /* 判断是否正在播放 */
 
 .pauseSongName {
   position: absolute;
-  width: 20%;
+  width: 25%;
   left: 15%;
   opacity: 0.9;
   /* 超出省略号 */
@@ -329,7 +390,7 @@ export default {
 
 .startSongName {
   position: absolute;
-  width: 20%;
+  width: 25%;
   left: 15%;
   opacity: 0.9;
   /* 超出省略号 */
@@ -342,7 +403,7 @@ export default {
 
 .noSongName {
   position: absolute;
-  width: 20%;
+  width: 25%;
   left: 15%;
   opacity: 0.9;
   /* 超出省略号 */
@@ -355,19 +416,26 @@ export default {
 
 .startSongAurtor {
   color: #507daf;
+  position: absolute;
+  left: 45%;
+  width: 15%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
 }
 
 /* 歌曲操作 */
 
 .songFunc {
   position: absolute;
-  left: 37%;
+  right: 10%;
 }
 
 /* 歌曲权限 */
 .songRoot {
   position: absolute;
-  right: 86%;
+  left: 10%;
 }
 </style>
   
