@@ -39,6 +39,14 @@ const state = {
     nowDuration: 0,
     // 用户歌单
     personalList: sessionStorage.getItem('personalList') ? JSON.parse(sessionStorage.getItem('personalList')) : [],
+    // 收藏的歌单
+    favoritePlaylists: localStorage.getItem('favoritePlaylists') ? JSON.parse(localStorage.getItem('favoritePlaylists')) : [],
+    // 用户浏览历史
+    userHistory: localStorage.getItem('userMusicHistory') ? JSON.parse(localStorage.getItem('userMusicHistory')) : {
+        viewedPlaylists: [],
+        playedSongs: [],
+        genres: []
+    }
 }
 const mutations = {
     // 保存当前搜索信息
@@ -199,6 +207,57 @@ const mutations = {
     savePersonalList(state,personalList){
         state.personalList=personalList
     },
+    // 保存收藏歌单
+    saveFavoritePlaylists(state, favoritePlaylists) {
+        state.favoritePlaylists = favoritePlaylists
+        localStorage.setItem('favoritePlaylists', JSON.stringify(favoritePlaylists))
+    },
+    // 添加收藏歌单
+    addFavoritePlaylist(state, playlist) {
+        const exists = state.favoritePlaylists.some(fav => fav.id === playlist.id)
+        if (!exists) {
+            state.favoritePlaylists.push({
+                id: playlist.id,
+                name: playlist.name,
+                coverImgUrl: playlist.coverImgUrl,
+                addedTime: new Date().toISOString()
+            })
+            localStorage.setItem('favoritePlaylists', JSON.stringify(state.favoritePlaylists))
+        }
+    },
+    // 移除收藏歌单
+    removeFavoritePlaylist(state, playlistId) {
+        const index = state.favoritePlaylists.findIndex(fav => fav.id === playlistId)
+        if (index !== -1) {
+            state.favoritePlaylists.splice(index, 1)
+            localStorage.setItem('favoritePlaylists', JSON.stringify(state.favoritePlaylists))
+        }
+    },
+    // 保存用户历史
+    saveUserHistory(state, userHistory) {
+        state.userHistory = userHistory
+        localStorage.setItem('userMusicHistory', JSON.stringify(userHistory))
+    },
+    // 添加浏览历史
+    addViewedPlaylist(state, playlistId) {
+        const existingIndex = state.userHistory.viewedPlaylists.findIndex(item => item.id === playlistId)
+        
+        if (existingIndex !== -1) {
+            state.userHistory.viewedPlaylists[existingIndex].viewTime = new Date().toISOString()
+        } else {
+            state.userHistory.viewedPlaylists.push({
+                id: playlistId,
+                viewTime: new Date().toISOString()
+            })
+        }
+        
+        // 限制历史记录数量
+        if (state.userHistory.viewedPlaylists.length > 20) {
+            state.userHistory.viewedPlaylists.shift()
+        }
+        
+        localStorage.setItem('userMusicHistory', JSON.stringify(state.userHistory))
+    }
 }
 const actions = {
     // 保存当前搜索信息
@@ -287,6 +346,26 @@ const actions = {
     // 保存用户歌单
     savePersonalList({ commit }, payload) {
         commit('savePersonalList', payload)
+    },
+    // 保存收藏歌单
+    saveFavoritePlaylists({ commit }, payload) {
+        commit('saveFavoritePlaylists', payload)
+    },
+    // 添加收藏歌单
+    addFavoritePlaylist({ commit }, payload) {
+        commit('addFavoritePlaylist', payload)
+    },
+    // 移除收藏歌单
+    removeFavoritePlaylist({ commit }, payload) {
+        commit('removeFavoritePlaylist', payload)
+    },
+    // 保存用户历史
+    saveUserHistory({ commit }, payload) {
+        commit('saveUserHistory', payload)
+    },
+    // 添加浏览历史
+    addViewedPlaylist({ commit }, payload) {
+        commit('addViewedPlaylist', payload)
     },
 }
 export default new Vuex.Store({
