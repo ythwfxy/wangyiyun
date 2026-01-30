@@ -29,6 +29,10 @@
           <el-menu-item v-for="(item, index2) in personalList.slice(1)" :key="index2" :index='"/home/songList/" + item.id'>
             <span>{{ item.name }}</span>
           </el-menu-item>
+          <el-menu-item index="/home/playlist-tag">
+            <i class="el-icon-collection-tag" style="margin-right: 8px;"></i>
+            <span>标签管理</span>
+          </el-menu-item>
         </div>
       </el-menu>
     </el-col>
