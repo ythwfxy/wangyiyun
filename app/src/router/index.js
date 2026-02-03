@@ -107,6 +107,13 @@ const router = new VueRouter({
                 path:'/home/myFM',
                 component:()=>
                     import('@/pages/myFM/myFM')
+            },
+            // 歌单广场个性化推荐
+            {
+                path:'/home/playlist-square',
+                name:'playlistSquare',
+                component:()=>
+                    import('@/pages/playlistSquare/playlistSquare')
             }
         ]
     }]
