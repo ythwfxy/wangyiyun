@@ -30,6 +30,13 @@
             <span>{{ item.name }}</span>
           </el-menu-item>
         </div>
+        <p class="leftNavFont">歌单管理</p>
+        <div>
+          <el-menu-item index="/home/playlist-tag">
+            <i class="el-icon-collection-tag" style="margin-right: 8px;"></i>
+            <span>标签管理</span>
+          </el-menu-item>
+        </div>
       </el-menu>
     </el-col>
   </div>
